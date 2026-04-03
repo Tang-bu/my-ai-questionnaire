@@ -8,13 +8,7 @@ export default function AdminHomePage() {
         backgroundColor: "#f8fafc",
         padding: "20px 16px",
         fontFamily: "Arial, sans-serif",
-        // 响应式内边距
-        '@media (min-width: 640px)': {
-          padding: "32px 20px",
-        },
-        '@media (min-width: 1024px)': {
-          padding: "40px 20px",
-        },
+        // 响应式内边距（在生产部署中简化）
       }}
     >
       <div
@@ -23,10 +17,7 @@ export default function AdminHomePage() {
           margin: "0 auto",
           display: "grid",
           gap: "16px",
-          // 响应式间距
-          '@media (min-width: 640px)': {
-            gap: "20px",
-          },
+          // 响应式间距（在生产部署中简化）
         }}
       >
         <div
@@ -36,14 +27,7 @@ export default function AdminHomePage() {
             borderRadius: "20px",
             padding: "24px",
             // 响应式内边距
-            '@media (min-width: 640px)': {
-              borderRadius: "24px",
-              padding: "32px",
-            },
-            '@media (min-width: 1024px)': {
-              padding: "36px",
-            },
-          }}
+            }}
         >
           <div
             style={{
@@ -55,11 +39,7 @@ export default function AdminHomePage() {
               fontWeight: 700,
               marginBottom: "12px",
               // 响应式字体
-              '@media (min-width: 640px)': {
-                fontSize: "13px",
-                marginBottom: "14px",
-              },
-            }}
+              }}
           >
             管理员后台
           </div>
@@ -71,14 +51,7 @@ export default function AdminHomePage() {
               fontSize: "24px",
               lineHeight: "1.3",
               // 响应式字体
-              '@media (min-width: 640px)': {
-                fontSize: "28px",
-                marginBottom: "12px",
-              },
-              '@media (min-width: 1024px)': {
-                fontSize: "32px",
-              },
-            }}
+              }}
           >
             后台管理总览
           </h1>
@@ -89,11 +62,7 @@ export default function AdminHomePage() {
               marginBottom: 0,
               fontSize: "14px",
               // 响应式字体
-              '@media (min-width: 640px)': {
-                lineHeight: "1.9",
-                fontSize: "15px",
-              },
-            }}
+              }}
           >
             这里用于管理问卷内容、提示词模板、模型配置和标准报告输出规则。
           </p>
@@ -105,15 +74,7 @@ export default function AdminHomePage() {
             gridTemplateColumns: "1fr", // 手机单列
             gap: "16px",
             // 响应式网格
-            '@media (min-width: 640px)': {
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "18px",
-            },
-            '@media (min-width: 768px)': {
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "20px",
-            },
-          }}
+            }}
         >
           <Link href="/admin/questionnaires" style={{ textDecoration: "none" }}>
             <div
@@ -124,11 +85,7 @@ export default function AdminHomePage() {
                 border: "1px solid #e5e7eb",
                 boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
                 // 响应式内边距
-                '@media (min-width: 640px)': {
-                  borderRadius: "18px",
-                  padding: "24px",
-                },
-              }}
+                }}
             >
               <h3
                 style={{
@@ -137,11 +94,7 @@ export default function AdminHomePage() {
                   fontSize: "18px",
                   marginBottom: "8px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    fontSize: "20px",
-                    marginBottom: "10px",
-                  },
-                }}
+                  }}
               >
                 问卷管理
               </h3>
@@ -152,11 +105,7 @@ export default function AdminHomePage() {
                   marginBottom: 0,
                   fontSize: "14px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    lineHeight: "1.8",
-                    fontSize: "16px",
-                  },
-                }}
+                  }}
               >
                 维护题目、结构和问卷内容。
               </p>
@@ -172,11 +121,7 @@ export default function AdminHomePage() {
                 border: "1px solid #e5e7eb",
                 boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
                 // 响应式内边距
-                '@media (min-width: 640px)': {
-                  borderRadius: "18px",
-                  padding: "24px",
-                },
-              }}
+                }}
             >
               <h3
                 style={{
@@ -185,11 +130,7 @@ export default function AdminHomePage() {
                   fontSize: "18px",
                   marginBottom: "8px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    fontSize: "20px",
-                    marginBottom: "10px",
-                  },
-                }}
+                  }}
               >
                 Prompt 管理
               </h3>
@@ -200,11 +141,7 @@ export default function AdminHomePage() {
                   marginBottom: 0,
                   fontSize: "14px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    lineHeight: "1.8",
-                    fontSize: "16px",
-                  },
-                }}
+                  }}
               >
                 管理提示词模板和输出要求。
               </p>
