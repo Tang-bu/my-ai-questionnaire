@@ -63,13 +63,7 @@ export default function AdminPromptsPage() {
         padding: "20px 16px",
         fontFamily: "Arial, sans-serif",
         // 响应式内边距
-        '@media (min-width: 640px)': {
-          padding: "32px 20px",
-        },
-        '@media (min-width: 1024px)': {
-          padding: "40px 20px",
-        },
-      }}
+        }}
     >
       <div
         style={{
@@ -78,10 +72,7 @@ export default function AdminPromptsPage() {
           display: "grid",
           gap: "16px",
           // 响应式间距
-          '@media (min-width: 640px)': {
-            gap: "20px",
-          },
-        }}
+          }}
       >
         <div
           style={{
@@ -104,12 +95,7 @@ export default function AdminPromptsPage() {
             flexDirection: "column", // 手机：垂直布局
             gap: "16px",
             // 响应式布局：手机垂直，桌面左右
-            '@media (min-width: 1024px)': {
-              display: "grid",
-              gridTemplateColumns: "1.1fr 0.9fr",
-              gap: "20px",
-            },
-          }}
+            }}
         >
           <div
             style={{
@@ -170,10 +156,7 @@ export default function AdminPromptsPage() {
                   cursor: "pointer",
                   // 桌面端隐藏，手机端显示
                   display: "block",
-                  '@media (min-width: 1024px)': {
-                    display: "none",
-                  },
-                }}
+                  }}
               >
                 {showPreview ? "隐藏预览" : "显示预览"}
               </button>

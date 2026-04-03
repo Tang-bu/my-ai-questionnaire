@@ -9,10 +9,7 @@ export default function Home() {
         padding: "20px 16px",
         fontFamily: "Arial, sans-serif",
         // 手机优化
-        '@media (min-width: 640px)': {
-          padding: "40px 20px",
-        },
-      }}
+        }}
     >
       <div
         style={{
@@ -28,13 +25,7 @@ export default function Home() {
             boxShadow: "0 18px 50px rgba(37,99,235,0.10)",
             border: "1px solid #e5e7eb",
             // 手机优化
-            '@media (min-width: 640px)': {
-              padding: "48px 40px",
-            },
-            '@media (min-width: 1024px)': {
-              padding: "56px 48px",
-            },
-          }}
+            }}
         >
           <div
             style={{
@@ -58,15 +49,7 @@ export default function Home() {
               color: "#111827",
               margin: "0 0 16px 0",
               // 响应式字体
-              '@media (min-width: 640px)': {
-                fontSize: "36px",
-                lineHeight: "1.25",
-                margin: "0 0 20px 0",
-              },
-              '@media (min-width: 1024px)': {
-                fontSize: "42px",
-              },
-            }}
+              }}
           >
             面向矿工行业的
             <br />
@@ -81,12 +64,7 @@ export default function Home() {
               maxWidth: "760px",
               marginBottom: "24px",
               // 响应式字体
-              '@media (min-width: 640px)': {
-                fontSize: "18px",
-                lineHeight: "1.9",
-                marginBottom: "32px",
-              },
-            }}
+              }}
           >
             本系统围绕矿工安全意识评估展开，通过问卷作答、提示词工程整合、
             AI 分析与标准化报告生成，为用户提供结构清晰、表述统一、便于反馈的评估结果。
@@ -99,12 +77,7 @@ export default function Home() {
               gap: "12px",
               width: "100%",
               // 响应式布局
-              '@media (min-width: 640px)': {
-                flexDirection: "row",
-                flexWrap: "wrap",
-                gap: "14px",
-              },
-            }}
+              }}
           >
             <Link href="/questionnaire/basic-info" style={{ width: "100%" }}>
               <button
@@ -120,12 +93,7 @@ export default function Home() {
                   width: "100%",
                   minHeight: "48px", // 触摸友好的高度
                   // 响应式按钮
-                  '@media (min-width: 640px)': {
-                    width: "auto",
-                    minWidth: "160px",
-                    padding: "14px 28px",
-                  },
-                }}
+                  }}
               >
                 开始填写问卷
               </button>
@@ -145,12 +113,7 @@ export default function Home() {
                   width: "100%",
                   minHeight: "48px",
                   // 响应式按钮
-                  '@media (min-width: 640px)': {
-                    width: "auto",
-                    minWidth: "160px",
-                    padding: "14px 28px",
-                  },
-                }}
+                  }}
               >
                 管理员入口
               </button>
@@ -164,15 +127,7 @@ export default function Home() {
               gridTemplateColumns: "1fr", // 手机单列
               gap: "16px",
               // 响应式网格
-              '@media (min-width: 640px)': {
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "16px",
-              },
-              '@media (min-width: 768px)': {
-                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-                gap: "20px",
-              },
-            }}
+              }}
           >
             <div
               style={{
@@ -188,11 +143,7 @@ export default function Home() {
                   color: "#111827",
                   fontSize: "18px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    fontSize: "20px",
-                    margin: "0 0 10px 0",
-                  },
-                }}
+                  }}
               >
                 问卷采集
               </h3>
@@ -203,11 +154,7 @@ export default function Home() {
                   lineHeight: "1.6",
                   fontSize: "14px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    lineHeight: "1.8",
-                    fontSize: "16px",
-                  },
-                }}
+                  }}
               >
                 支持用户填写基本信息与安全意识相关问卷内容，后续可扩展语音输入。
               </p>
@@ -227,11 +174,7 @@ export default function Home() {
                   color: "#111827",
                   fontSize: "18px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    fontSize: "20px",
-                    margin: "0 0 10px 0",
-                  },
-                }}
+                  }}
               >
                 AI 分析
               </h3>
@@ -242,11 +185,7 @@ export default function Home() {
                   lineHeight: "1.6",
                   fontSize: "14px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    lineHeight: "1.8",
-                    fontSize: "16px",
-                  },
-                }}
+                  }}
               >
                 自动整合设定、模型、答卷与输出要求，完成分类判断与初步结果生成。
               </p>
@@ -266,11 +205,7 @@ export default function Home() {
                   color: "#111827",
                   fontSize: "18px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    fontSize: "20px",
-                    margin: "0 0 10px 0",
-                  },
-                }}
+                  }}
               >
                 标准报告
               </h3>
@@ -281,11 +216,7 @@ export default function Home() {
                   lineHeight: "1.6",
                   fontSize: "14px",
                   // 响应式字体
-                  '@media (min-width: 640px)': {
-                    lineHeight: "1.8",
-                    fontSize: "16px",
-                  },
-                }}
+                  }}
               >
                 对 AI 原始结果统一字段、结构与表述，形成适合展示与管理的标准化报告。
               </p>

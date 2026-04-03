@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(node fix-admin-page.js)"
+      "Bash(node fix-admin-page.js)",
+      "Bash(node fix-all-media-queries.js)"
     ]
   }
 }

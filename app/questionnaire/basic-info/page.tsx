@@ -39,10 +39,7 @@ export default function BasicInfoPage() {
         padding: "20px 16px",
         fontFamily: "Arial, sans-serif",
         // 响应式内边距
-        '@media (min-width: 640px)': {
-          padding: "40px 20px",
-        },
-      }}
+        }}
     >
       <div
         style={{
@@ -54,13 +51,7 @@ export default function BasicInfoPage() {
           boxShadow: "0 12px 30px rgba(15,23,42,0.08)",
           border: "1px solid #e5e7eb",
           // 响应式内边距
-          '@media (min-width: 640px)': {
-            padding: "32px 28px",
-          },
-          '@media (min-width: 768px)': {
-            padding: "36px",
-          },
-        }}
+          }}
       >
         <h1
           style={{
@@ -69,13 +60,7 @@ export default function BasicInfoPage() {
             fontSize: "24px",
             lineHeight: "1.3",
             // 响应式字体
-            '@media (min-width: 640px)': {
-              fontSize: "28px",
-            },
-            '@media (min-width: 768px)': {
-              fontSize: "32px",
-            },
-          }}
+            }}
         >
           基本信息填写
         </h1>
@@ -86,12 +71,7 @@ export default function BasicInfoPage() {
             marginBottom: "24px",
             fontSize: "16px",
             // 响应式字体
-            '@media (min-width: 640px)': {
-              lineHeight: "1.8",
-              marginBottom: "28px",
-              fontSize: "17px",
-            },
-          }}
+            }}
         >
           请先填写基础信息，后续将进入安全意识问卷页面。
         </p>
@@ -102,14 +82,7 @@ export default function BasicInfoPage() {
             gridTemplateColumns: "1fr", // 手机单列
             gap: "16px",
             // 响应式网格
-            '@media (min-width: 640px)': {
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "18px",
-            },
-            '@media (min-width: 768px)': {
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            },
-          }}
+            }}
         >
           <div>
             <label
@@ -120,10 +93,7 @@ export default function BasicInfoPage() {
                 fontSize: "14px",
                 fontWeight: 500,
                 // 响应式字体
-                '@media (min-width: 640px)': {
-                  fontSize: "15px",
-                },
-              }}
+                }}
             >
               姓名
             </label>
@@ -141,11 +111,7 @@ export default function BasicInfoPage() {
                 boxSizing: "border-box",
                 minHeight: "48px", // 触摸友好的高度
                 // 响应式样式
-                '@media (min-width: 640px)': {
-                  fontSize: "15px",
-                  minHeight: "44px",
-                },
-              }}
+                }}
             />
           </div>
 
@@ -258,10 +224,7 @@ export default function BasicInfoPage() {
             border: "1px solid #e5e7eb",
             borderRadius: "12px",
             // 响应式内边距
-            '@media (min-width: 640px)': {
-              padding: "20px",
-            },
-          }}
+            }}
         >
           <h3
             style={{
@@ -270,10 +233,7 @@ export default function BasicInfoPage() {
               fontSize: "16px",
               marginBottom: "12px",
               // 响应式字体
-              '@media (min-width: 640px)': {
-                fontSize: "18px",
-              },
-            }}
+              }}
           >
             当前填写预览
           </h3>
@@ -287,16 +247,7 @@ export default function BasicInfoPage() {
               gridTemplateColumns: "1fr",
               gap: "8px",
               // 响应式布局
-              '@media (min-width: 640px)': {
-                fontSize: "15px",
-                lineHeight: "1.8",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: "12px",
-              },
-              '@media (min-width: 768px)': {
-                gridTemplateColumns: "repeat(3, 1fr)",
-              },
-            }}
+              }}
           >
             <div>姓名：{formData.name || "未填写"}</div>
             <div>性别：{formData.gender || "未填写"}</div>
@@ -315,11 +266,7 @@ export default function BasicInfoPage() {
             gap: "12px",
             width: "100%",
             // 响应式布局
-            '@media (min-width: 640px)': {
-              flexDirection: "row",
-              flexWrap: "wrap",
-            },
-          }}
+            }}
         >
           <Link href="/" style={{ width: "100%" }}>
             <button
@@ -334,13 +281,7 @@ export default function BasicInfoPage() {
                 minHeight: "48px", // 触摸友好的高度
                 fontSize: "16px",
                 // 响应式按钮
-                '@media (min-width: 640px)': {
-                  width: "auto",
-                  minWidth: "120px",
-                  padding: "12px 22px",
-                  minHeight: "44px",
-                },
-              }}
+                }}
             >
               返回首页
             </button>
@@ -360,13 +301,7 @@ export default function BasicInfoPage() {
                 fontSize: "16px",
                 fontWeight: 500,
                 // 响应式按钮
-                '@media (min-width: 640px)': {
-                  width: "auto",
-                  minWidth: "180px",
-                  padding: "12px 22px",
-                  minHeight: "44px",
-                },
-              }}
+                }}
             >
               下一步：进入问卷第 1 页
             </button>
