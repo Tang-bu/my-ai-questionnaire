@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
     console.log('返回响应数据');
     return NextResponse.json(responseData);
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('问卷提交错误:', error);
 
     // 处理验证错误

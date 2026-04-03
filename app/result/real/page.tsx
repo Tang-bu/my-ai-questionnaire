@@ -92,7 +92,7 @@ export default function RealResultPage() {
         throw new Error('API返回了失败状态');
       }
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('获取AI分析失败:', error);
       setError(error.message || '获取AI分析失败');
     } finally {
