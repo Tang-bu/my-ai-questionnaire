@@ -1,0 +1,29 @@
+{
+  "request": "{\"model\":\"Qwen/Qwen2.5-14B-Instruct\",\"messages\":[{\"role\":\"system\",\"content\":\"请返回一个简单的JSON测试响应：{\\\"status\\\": \\\"success\\\", \\\"test\\\": \\\"硅基流动API连接正常\\\"}\"},{\"role\":\"user\",\"content\":\"请确认API连接是否正常\"}],\"temperature\":0.7,\"max_tokens\":100,\"response_format\":{\"type\":\"json_object\"}}",
+  "response": {
+    "id": "019d4e438e4447da197a4a3fd92a56bb",
+    "object": "chat.completion",
+    "created": 1775134543,
+    "model": "Qwen/Qwen2.5-14B-Instruct",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"status\": \"success\", \"test\": \"硅基流动API连接正常\"}"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 44,
+      "completion_tokens": 17,
+      "total_tokens": 61
+    },
+    "system_fingerprint": ""
+  },
+  "metadata": {
+    "elapsedTime": 846,
+    "timestamp": "2026-04-02T12:55:44.253Z"
+  }
+}
