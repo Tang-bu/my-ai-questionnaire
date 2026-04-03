@@ -191,14 +191,14 @@ export const responsive = {
       fontSize: sizes.base,
     };
 
-    // 添加媒体查询
-    if (sizes.sm) {
+    // 添加媒体查询（安全地检查属性是否存在）
+    if ('sm' in sizes && sizes.sm) {
       style[MEDIA_QUERIES.sm] = { fontSize: sizes.sm };
     }
-    if (sizes.md) {
+    if ('md' in sizes && sizes.md) {
       style[MEDIA_QUERIES.md] = { fontSize: sizes.md };
     }
-    if (sizes.lg) {
+    if ('lg' in sizes && sizes.lg) {
       style[MEDIA_QUERIES.lg] = { fontSize: sizes.lg };
     }
 
@@ -212,14 +212,14 @@ export const responsive = {
       padding: spacing.base,
     };
 
-    // 添加媒体查询
-    if (spacing.sm) {
+    // 添加媒体查询（安全地检查属性是否存在）
+    if ('sm' in spacing && spacing.sm) {
       style[MEDIA_QUERIES.sm] = { padding: spacing.sm };
     }
-    if (spacing.md) {
+    if ('md' in spacing && spacing.md) {
       style[MEDIA_QUERIES.md] = { padding: spacing.md };
     }
-    if (spacing.lg) {
+    if ('lg' in spacing && spacing.lg) {
       style[MEDIA_QUERIES.lg] = { padding: spacing.lg };
     }
 
@@ -227,9 +227,9 @@ export const responsive = {
   },
 
   // 创建响应式网格
-  grid(columns: keyof typeof LAYOUT.grid.columns = '1', gap: keyof typeof SPACING.gap = 'lg'): Record<string, any> {
+  grid(columns: keyof typeof LAYOUT.grid.columns = 1, gap: keyof typeof SPACING.gap = 'lg'): Record<string, any> {
     const baseColumns = LAYOUT.grid.columns[1]; // 手机默认单列
-    const responsiveColumns = LAYOUT.grid.columns[columns as any];
+    const responsiveColumns = LAYOUT.grid.columns[columns];
 
     const style: Record<string, any> = {
       display: 'grid',

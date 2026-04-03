@@ -94,7 +94,8 @@ export default function RealResultPage() {
 
     } catch (error) {
       console.error('获取AI分析失败:', error);
-      setError(error.message || '获取AI分析失败');
+      const errorMessage = error instanceof Error ? error.message : '获取AI分析失败';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
       setIsSubmitting(false);

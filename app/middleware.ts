@@ -1,6 +1,7 @@
 import { middleware as supabaseMiddleware } from './lib/supabase/middleware';
+import { NextRequest } from 'next/server';
 
-export async function middleware(request: Request) {
+export async function middleware(request: NextRequest) {
   // 调用Supabase中间件
   return supabaseMiddleware(request);
 }

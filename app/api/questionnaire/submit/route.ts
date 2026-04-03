@@ -172,11 +172,14 @@ export async function POST(request: NextRequest) {
 
     // 处理验证错误
     if (error instanceof z.ZodError) {
+      // 添加类型断言
+      const zodError = error as z.ZodError;
+
       return NextResponse.json(
         {
           success: false,
           error: '数据验证失败',
-          details: error.errors.map(err => ({
+          details: zodError.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -187,12 +190,14 @@ export async function POST(request: NextRequest) {
     }
 
     // 处理其他错误
+    const errorMessage = error instanceof Error ? error.message : '未知错误';
+
     return NextResponse.json(
       {
         success: false,
         error: '服务器内部错误',
         message: '问卷提交失败，请稍后重试',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
       },
       { status: 500 }
     );

@@ -144,7 +144,8 @@ export abstract class AIProvider {
 
     } catch (error) {
       if (fallbackToRaw) {
-        return { raw: rawResponse, parseError: error.message };
+        const errorMessage = error instanceof Error ? error.message : '未知解析错误';
+        return { raw: rawResponse, parseError: errorMessage };
       }
       throw error;
     }
