@@ -1,227 +1,197 @@
 import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%)",
-        padding: "20px 16px",
-        fontFamily: "Arial, sans-serif",
-        // 手机优化
-        }}
+        backgroundColor: "#f1f5f9",
+        padding: "24px",
+      }}
     >
       <div
         style={{
-          maxWidth: "1100px",
+          maxWidth: "1280px",
           margin: "0 auto",
+          backgroundColor: "#ffffff",
+          borderRadius: "28px",
+          padding: "40px",
+          boxShadow: "0 8px 30px rgba(15, 23, 42, 0.06)",
         }}
       >
         <div
           style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "24px",
-            padding: "32px 24px",
-            boxShadow: "0 18px 50px rgba(37,99,235,0.10)",
-            border: "1px solid #e5e7eb",
-            // 手机优化
-            }}
+            display: "inline-block",
+            backgroundColor: "#dbeafe",
+            color: "#1d4ed8",
+            padding: "12px 18px",
+            borderRadius: "999px",
+            fontWeight: 700,
+            fontSize: "16px",
+          }}
         >
-          <div
+          矿工安全意识智能评估平台
+        </div>
+
+        <h1
+          style={{
+            marginTop: "28px",
+            marginBottom: "16px",
+            fontSize: "56px",
+            lineHeight: 1.25,
+            color: "#0f172a",
+            maxWidth: "980px",
+          }}
+        >
+          面向矿工行业的
+          <br />
+          AI 安全意识检测与标准化报告生成系统
+        </h1>
+
+        <p
+          style={{
+            fontSize: "20px",
+            lineHeight: 1.9,
+            color: "#475569",
+            maxWidth: "1100px",
+          }}
+        >
+          本系统围绕矿工安全意识评估展开，通过问卷作答、AI 分析与标准化报告生成，
+          为用户提供结构清晰、表达统一、便于反馈的评估结果。
+        </p>
+
+        <div
+          style={{
+            display: "grid",
+            gap: "16px",
+            marginTop: "32px",
+          }}
+        >
+          <Link href="/login">
+            <button
+              style={{
+                width: "100%",
+                backgroundColor: "#2563eb",
+                color: "#fff",
+                border: "none",
+                borderRadius: "18px",
+                padding: "22px",
+                fontSize: "20px",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              用户登录
+            </button>
+          </Link>
+
+          <Link href="/register">
+            <button
+              style={{
+                width: "100%",
+                backgroundColor: "#1d4ed8",
+                color: "#fff",
+                border: "none",
+                borderRadius: "18px",
+                padding: "22px",
+                fontSize: "20px",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              用户注册
+            </button>
+          </Link>
+
+          <Link href="/questionnaire">
+            <button
+              style={{
+                width: "100%",
+                backgroundColor: "#0f172a",
+                color: "#fff",
+                border: "none",
+                borderRadius: "18px",
+                padding: "22px",
+                fontSize: "20px",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              开始填写问卷
+            </button>
+          </Link>
+
+          <Link href="/admin">
+            <button
+              style={{
+                width: "100%",
+                backgroundColor: "#020617",
+                color: "#fff",
+                border: "none",
+                borderRadius: "18px",
+                padding: "22px",
+                fontSize: "20px",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              管理员入口
+            </button>
+          </Link>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            gap: "22px",
+            marginTop: "42px",
+          }}
+        >
+          <section
             style={{
-              display: "inline-block",
-              backgroundColor: "#dbeafe",
-              color: "#1d4ed8",
-              padding: "8px 14px",
-              borderRadius: "999px",
-              fontSize: "14px",
-              fontWeight: 700,
-              marginBottom: "20px",
+              border: "1px solid #e2e8f0",
+              borderRadius: "22px",
+              padding: "28px",
             }}
           >
-            矿工安全意识智能评估平台
-          </div>
+            <h3 style={{ fontSize: "24px", marginTop: 0, color: "#0f172a" }}>
+              问卷采集
+            </h3>
+            <p style={{ color: "#64748b", fontSize: "18px", lineHeight: 1.8 }}>
+              支持用户填写基本信息与安全意识相关问卷内容。
+            </p>
+          </section>
 
-          <h1
+          <section
             style={{
-              fontSize: "28px",
-              lineHeight: "1.3",
-              color: "#111827",
-              margin: "0 0 16px 0",
-              // 响应式字体
-              }}
+              border: "1px solid #e2e8f0",
+              borderRadius: "22px",
+              padding: "28px",
+            }}
           >
-            面向矿工行业的
-            <br />
-            AI 安全意识检测与标准化报告生成系统
-          </h1>
+            <h3 style={{ fontSize: "24px", marginTop: 0, color: "#0f172a" }}>
+              AI 分析
+            </h3>
+            <p style={{ color: "#64748b", fontSize: "18px", lineHeight: 1.8 }}>
+              自动整合问卷内容并生成结构化分析结果。
+            </p>
+          </section>
 
-          <p
+          <section
             style={{
-              fontSize: "16px",
-              color: "#4b5563",
-              lineHeight: "1.8",
-              maxWidth: "760px",
-              marginBottom: "24px",
-              // 响应式字体
-              }}
+              border: "1px solid #e2e8f0",
+              borderRadius: "22px",
+              padding: "28px",
+            }}
           >
-            本系统围绕矿工安全意识评估展开，通过问卷作答、提示词工程整合、
-            AI 分析与标准化报告生成，为用户提供结构清晰、表述统一、便于反馈的评估结果。
-          </p>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-              width: "100%",
-              // 响应式布局
-              }}
-          >
-            <Link href="/questionnaire/basic-info" style={{ width: "100%" }}>
-              <button
-                style={{
-                  backgroundColor: "#2563eb",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "12px",
-                  padding: "16px 24px",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  width: "100%",
-                  minHeight: "48px", // 触摸友好的高度
-                  // 响应式按钮
-                  }}
-              >
-                开始填写问卷
-              </button>
-            </Link>
-
-            <Link href="/admin" style={{ width: "100%" }}>
-              <button
-                style={{
-                  backgroundColor: "#111827",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "12px",
-                  padding: "16px 24px",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  width: "100%",
-                  minHeight: "48px",
-                  // 响应式按钮
-                  }}
-              >
-                管理员入口
-              </button>
-            </Link>
-          </div>
-
-          <div
-            style={{
-              marginTop: "32px",
-              display: "grid",
-              gridTemplateColumns: "1fr", // 手机单列
-              gap: "16px",
-              // 响应式网格
-              }}
-          >
-            <div
-              style={{
-                backgroundColor: "#f9fafb",
-                borderRadius: "16px",
-                padding: "20px",
-                border: "1px solid #e5e7eb",
-              }}
-            >
-              <h3
-                style={{
-                  margin: "0 0 8px 0",
-                  color: "#111827",
-                  fontSize: "18px",
-                  // 响应式字体
-                  }}
-              >
-                问卷采集
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#6b7280",
-                  lineHeight: "1.6",
-                  fontSize: "14px",
-                  // 响应式字体
-                  }}
-              >
-                支持用户填写基本信息与安全意识相关问卷内容，后续可扩展语音输入。
-              </p>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: "#f9fafb",
-                borderRadius: "16px",
-                padding: "20px",
-                border: "1px solid #e5e7eb",
-              }}
-            >
-              <h3
-                style={{
-                  margin: "0 0 8px 0",
-                  color: "#111827",
-                  fontSize: "18px",
-                  // 响应式字体
-                  }}
-              >
-                AI 分析
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#6b7280",
-                  lineHeight: "1.6",
-                  fontSize: "14px",
-                  // 响应式字体
-                  }}
-              >
-                自动整合设定、模型、答卷与输出要求，完成分类判断与初步结果生成。
-              </p>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: "#f9fafb",
-                borderRadius: "16px",
-                padding: "20px",
-                border: "1px solid #e5e7eb",
-              }}
-            >
-              <h3
-                style={{
-                  margin: "0 0 8px 0",
-                  color: "#111827",
-                  fontSize: "18px",
-                  // 响应式字体
-                  }}
-              >
-                标准报告
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#6b7280",
-                  lineHeight: "1.6",
-                  fontSize: "14px",
-                  // 响应式字体
-                  }}
-              >
-                对 AI 原始结果统一字段、结构与表述，形成适合展示与管理的标准化报告。
-              </p>
-            </div>
-          </div>
+            <h3 style={{ fontSize: "24px", marginTop: 0, color: "#0f172a" }}>
+              标准报告
+            </h3>
+            <p style={{ color: "#64748b", fontSize: "18px", lineHeight: 1.8 }}>
+              对 AI 输出进行统一结构化处理，形成标准化报告。
+            </p>
+          </section>
         </div>
       </div>
     </main>
