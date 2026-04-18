@@ -103,7 +103,7 @@ export default function HomePage() {
             </button>
           </Link>
 
-          <Link href="/questionnaire">
+          <Link href="/questionnaire/basic-info">
             <button
               style={{
                 width: "100%",
