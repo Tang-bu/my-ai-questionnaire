@@ -58,11 +58,18 @@ JSON 字段必须包含：
     "interventionWillingness": 0,
     "hazardReporting": 0
   },
-  "overallAssessment": "总体评估",
-  "strengths": ["优势1", "优势2"],
-  "weaknesses": ["不足1", "不足2"],
-  "recommendations": ["建议1", "建议2"],
-  "keyRisks": ["风险点1", "风险点2"],
+  "overallAssessment": "对该受访者安全意识的总体判断",
+  "strengths": ["主要优势1", "主要优势2", "主要优势3"],
+  "blindSpots": ["关键盲区1", "关键盲区2"],
+  "keyRisks": ["关键风险点1", "关键风险点2"],
+  "recommendations": ["针对性建议1", "针对性建议2", "针对性建议3"],
   "trainingNeeds": ["培训需求1", "培训需求2"]
-}`;
+}
+
+要求：
+1. strengths 必须突出个人优势表现
+2. blindSpots 必须体现安全意识盲区
+3. keyRisks 必须体现潜在风险点
+4. recommendations 必须具体、可执行
+5. 所有数组字段尽量控制在 2-4 条`;
 }

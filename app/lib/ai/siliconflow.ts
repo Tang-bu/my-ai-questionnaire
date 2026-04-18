@@ -48,29 +48,29 @@ function normalizeStructuredResult(value: unknown): Record<string, unknown> {
       ? (obj.dimensions as Record<string, unknown>)
       : {};
 
-  return {
-    dimensions: {
-      safetyPriority: normalizeNumber(rawDimensions.safetyPriority),
-      complianceAwareness: normalizeNumber(rawDimensions.complianceAwareness),
-      responsibilityAwareness: normalizeNumber(
-        rawDimensions.responsibilityAwareness
-      ),
-      luckPsychology: normalizeNumber(rawDimensions.luckPsychology),
-      conformityPsychology: normalizeNumber(rawDimensions.conformityPsychology),
-      riskIdentification: normalizeNumber(rawDimensions.riskIdentification),
-      emergencyHandling: normalizeNumber(rawDimensions.emergencyHandling),
-      interventionWillingness: normalizeNumber(
-        rawDimensions.interventionWillingness
-      ),
-      hazardReporting: normalizeNumber(rawDimensions.hazardReporting),
-    },
-    overallAssessment: String(obj.overallAssessment ?? ""),
-    strengths: normalizeArray(obj.strengths),
-    weaknesses: normalizeArray(obj.weaknesses),
-    recommendations: normalizeArray(obj.recommendations),
-    keyRisks: normalizeArray(obj.keyRisks),
-    trainingNeeds: normalizeArray(obj.trainingNeeds),
-  };
+ return {
+  dimensions: {
+    safetyPriority: normalizeNumber(rawDimensions.safetyPriority),
+    complianceAwareness: normalizeNumber(rawDimensions.complianceAwareness),
+    responsibilityAwareness: normalizeNumber(
+      rawDimensions.responsibilityAwareness
+    ),
+    luckPsychology: normalizeNumber(rawDimensions.luckPsychology),
+    conformityPsychology: normalizeNumber(rawDimensions.conformityPsychology),
+    riskIdentification: normalizeNumber(rawDimensions.riskIdentification),
+    emergencyHandling: normalizeNumber(rawDimensions.emergencyHandling),
+    interventionWillingness: normalizeNumber(
+      rawDimensions.interventionWillingness
+    ),
+    hazardReporting: normalizeNumber(rawDimensions.hazardReporting),
+  },
+  overallAssessment: String(obj.overallAssessment ?? ""),
+  strengths: normalizeArray(obj.strengths),
+  blindSpots: normalizeArray(obj.blindSpots),
+  keyRisks: normalizeArray(obj.keyRisks),
+  recommendations: normalizeArray(obj.recommendations),
+  trainingNeeds: normalizeArray(obj.trainingNeeds),
+};
 }
 
 export async function analyzeWithSiliconFlow(
@@ -124,24 +124,24 @@ export async function analyzeWithSiliconFlow(
     parsed = JSON.parse(rawText);
   } catch {
     parsed = {
-      dimensions: {
-        safetyPriority: 0,
-        complianceAwareness: 0,
-        responsibilityAwareness: 0,
-        luckPsychology: 0,
-        conformityPsychology: 0,
-        riskIdentification: 0,
-        emergencyHandling: 0,
-        interventionWillingness: 0,
-        hazardReporting: 0,
-      },
-      overallAssessment: rawText,
-      strengths: [],
-      weaknesses: [],
-      recommendations: [],
-      keyRisks: [],
-      trainingNeeds: [],
-    };
+  dimensions: {
+    safetyPriority: 0,
+    complianceAwareness: 0,
+    responsibilityAwareness: 0,
+    luckPsychology: 0,
+    conformityPsychology: 0,
+    riskIdentification: 0,
+    emergencyHandling: 0,
+    interventionWillingness: 0,
+    hazardReporting: 0,
+  },
+  overallAssessment: rawText,
+  strengths: [],
+  blindSpots: [],
+  keyRisks: [],
+  recommendations: [],
+  trainingNeeds: [],
+};
   }
 
   return {
