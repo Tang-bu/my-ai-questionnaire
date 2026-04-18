@@ -1,12 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 type QuestionItem = {
   id: number;
   title: string;
   guide: string;
+};
+
+type BasicInfo = {
+  name: string;
+  gender: string;
+  age: string;
+  jobType: string;
+  workYears: string;
+  mineArea: string;
+};
+
+type Page1Answers = {
+  question1: string;
+  question2: string;
+};
+
+type Page2Answers = {
+  question3: string;
+  question4: string;
+};
+
+type Page3Answers = {
+  question5: string;
+  question6: string;
+};
+
+type Page4Answers = {
+  question7: string;
+  question8: string;
+};
+
+type Page5Answers = {
+  question9: string;
+  question10: string;
 };
 
 const defaultQuestions: QuestionItem[] = [
@@ -63,7 +98,9 @@ const defaultQuestions: QuestionItem[] = [
 ];
 
 export default function ConfirmPage() {
-  const [basicInfo, setBasicInfo] = useState({
+  const router = useRouter();
+
+  const [basicInfo, setBasicInfo] = useState<BasicInfo>({
     name: "",
     gender: "",
     age: "",
@@ -72,32 +109,34 @@ export default function ConfirmPage() {
     mineArea: "",
   });
 
-  const [page1, setPage1] = useState({
+  const [page1, setPage1] = useState<Page1Answers>({
     question1: "",
     question2: "",
   });
 
-  const [page2, setPage2] = useState({
+  const [page2, setPage2] = useState<Page2Answers>({
     question3: "",
     question4: "",
   });
 
-  const [page3, setPage3] = useState({
+  const [page3, setPage3] = useState<Page3Answers>({
     question5: "",
     question6: "",
   });
 
-  const [page4, setPage4] = useState({
+  const [page4, setPage4] = useState<Page4Answers>({
     question7: "",
     question8: "",
   });
 
-  const [page5, setPage5] = useState({
+  const [page5, setPage5] = useState<Page5Answers>({
     question9: "",
     question10: "",
   });
 
   const [questions, setQuestions] = useState<QuestionItem[]>(defaultQuestions);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     const savedBasicInfo = localStorage.getItem("basicInfo");
@@ -117,116 +156,192 @@ export default function ConfirmPage() {
     if (savedQuestions) setQuestions(JSON.parse(savedQuestions));
   }, []);
 
-  const answerMap: Record<number, string> = {
-    1: page1.question1,
-    2: page1.question2,
-    3: page2.question3,
-    4: page2.question4,
-    5: page3.question5,
-    6: page3.question6,
-    7: page4.question7,
-    8: page4.question8,
-    9: page5.question9,
-    10: page5.question10,
-  };
+  const answers = useMemo<Record<string, string>>(
+    () => ({
+      "1": page1.question1,
+      "2": page1.question2,
+      "3": page2.question3,
+      "4": page2.question4,
+      "5": page3.question5,
+      "6": page3.question6,
+      "7": page4.question7,
+      "8": page4.question8,
+      "9": page5.question9,
+      "10": page5.question10,
+    }),
+    [page1, page2, page3, page4, page5]
+  );
+
+  const answerMap = useMemo<Record<number, string>>(
+    () => ({
+      1: page1.question1,
+      2: page1.question2,
+      3: page2.question3,
+      4: page2.question4,
+      5: page3.question5,
+      6: page3.question6,
+      7: page4.question7,
+      8: page4.question8,
+      9: page5.question9,
+      10: page5.question10,
+    }),
+    [page1, page2, page3, page4, page5]
+  );
+
+  async function handleSubmit() {
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
+
+      const response = await fetch("/api/questionnaire/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          basicInfo,
+          answers,
+        }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok || !json.success) {
+        throw new Error(json.message || "问卷提交失败");
+      }
+
+      const { questionnaireId, taskId } = json.data;
+
+      router.push(`/result/${questionnaireId}?taskId=${taskId}`);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "提交失败，请稍后重试"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <main
       style={{
         minHeight: "100vh",
         backgroundColor: "#f8fafc",
-        padding: "40px 20px",
-        fontFamily: "Arial, sans-serif",
+        padding: "32px 16px",
       }}
     >
       <div
         style={{
-          maxWidth: "980px",
+          maxWidth: "960px",
           margin: "0 auto",
-          display: "grid",
-          gap: "20px",
+          backgroundColor: "#ffffff",
+          borderRadius: "16px",
+          padding: "28px",
+          boxShadow: "0 8px 30px rgba(15, 23, 42, 0.08)",
         }}
       >
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "20px",
-            padding: "36px",
-            boxShadow: "0 12px 30px rgba(15,23,42,0.08)",
-            border: "1px solid #e5e7eb",
-          }}
-        >
-          <div
+        <div style={{ marginBottom: "24px" }}>
+          <p
             style={{
-              display: "inline-block",
-              backgroundColor: "#dcfce7",
-              color: "#166534",
-              padding: "6px 12px",
-              borderRadius: "999px",
-              fontSize: "13px",
+              margin: 0,
+              color: "#16a34a",
               fontWeight: 700,
-              marginBottom: "14px",
+              fontSize: "14px",
             }}
           >
             最后一步
-          </div>
-
-          <h1 style={{ marginTop: 0, color: "#111827" }}>提交确认</h1>
-          <p style={{ color: "#6b7280", lineHeight: "1.9", marginBottom: 0 }}>
+          </p>
+          <h1
+            style={{
+              marginTop: "8px",
+              marginBottom: "8px",
+              fontSize: "28px",
+              color: "#0f172a",
+            }}
+          >
+            提交确认
+          </h1>
+          <p
+            style={{
+              margin: 0,
+              color: "#475569",
+              lineHeight: 1.7,
+            }}
+          >
             请在提交前确认以下内容是否完整。当前页面展示的是本地保存的填写数据汇总，并会优先显示后台设置的题目标题。
           </p>
         </div>
 
-        <div
+        <section
           style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "18px",
-            padding: "24px",
-            border: "1px solid #e5e7eb",
+            border: "1px solid #e2e8f0",
+            borderRadius: "14px",
+            padding: "20px",
+            marginBottom: "20px",
           }}
         >
-          <h2 style={{ marginTop: 0, color: "#111827" }}>一、基本信息</h2>
-          <p style={{ color: "#6b7280", lineHeight: "1.9", marginBottom: 0 }}>
-            姓名：{basicInfo.name || "未填写"}
-            <br />
-            性别：{basicInfo.gender || "未填写"}
-            <br />
-            年龄：{basicInfo.age || "未填写"}
-            <br />
-            工种：{basicInfo.jobType || "未填写"}
-            <br />
-            工龄：{basicInfo.workYears || "未填写"}
-            <br />
-            所属矿区/单位：{basicInfo.mineArea || "未填写"}
-          </p>
-        </div>
+          <h2
+            style={{
+              marginTop: 0,
+              marginBottom: "16px",
+              fontSize: "20px",
+              color: "#0f172a",
+            }}
+          >
+            一、基本信息
+          </h2>
 
-        <div
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "12px",
+            }}
+          >
+            <InfoItem label="姓名" value={basicInfo.name} />
+            <InfoItem label="性别" value={basicInfo.gender} />
+            <InfoItem label="年龄" value={basicInfo.age} />
+            <InfoItem label="工种" value={basicInfo.jobType} />
+            <InfoItem label="工龄" value={basicInfo.workYears} />
+            <InfoItem label="所属矿区/单位" value={basicInfo.mineArea} />
+          </div>
+        </section>
+
+        <section
           style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "18px",
-            padding: "24px",
-            border: "1px solid #e5e7eb",
+            border: "1px solid #e2e8f0",
+            borderRadius: "14px",
+            padding: "20px",
+            marginBottom: "20px",
           }}
         >
-          <h2 style={{ marginTop: 0, color: "#111827" }}>二、问卷答案汇总</h2>
+          <h2
+            style={{
+              marginTop: 0,
+              marginBottom: "16px",
+              fontSize: "20px",
+              color: "#0f172a",
+            }}
+          >
+            二、问卷答案汇总
+          </h2>
 
-          <div style={{ display: "grid", gap: "18px" }}>
+          <div style={{ display: "grid", gap: "16px" }}>
             {questions.map((question) => (
               <div
                 key={question.id}
                 style={{
-                  padding: "16px",
-                  backgroundColor: "#f9fafb",
                   border: "1px solid #e5e7eb",
                   borderRadius: "12px",
+                  padding: "16px",
+                  backgroundColor: "#fcfcfd",
                 }}
               >
                 <div
                   style={{
                     fontSize: "13px",
-                    color: "#2563eb",
                     fontWeight: 700,
+                    color: "#16a34a",
                     marginBottom: "8px",
                   }}
                 >
@@ -235,10 +350,11 @@ export default function ConfirmPage() {
 
                 <div
                   style={{
+                    fontSize: "16px",
+                    fontWeight: 600,
                     color: "#111827",
-                    fontWeight: 700,
-                    lineHeight: "1.8",
-                    marginBottom: "8px",
+                    marginBottom: "10px",
+                    lineHeight: 1.6,
                   }}
                 >
                   {question.title}
@@ -246,8 +362,8 @@ export default function ConfirmPage() {
 
                 <div
                   style={{
-                    color: "#6b7280",
-                    lineHeight: "1.8",
+                    color: "#374151",
+                    lineHeight: 1.8,
                     whiteSpace: "pre-wrap",
                   }}
                 >
@@ -256,23 +372,39 @@ export default function ConfirmPage() {
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div
+        <section
           style={{
-            backgroundColor: "#f9fafb",
-            border: "1px solid #e5e7eb",
-            borderRadius: "16px",
-            padding: "20px",
+            border: "1px solid #dcfce7",
+            backgroundColor: "#f0fdf4",
+            borderRadius: "14px",
+            padding: "18px 20px",
+            marginBottom: "24px",
           }}
         >
-          <h3 style={{ marginTop: 0, color: "#111827" }}>提交前提醒</h3>
-          <ul style={{ color: "#6b7280", lineHeight: "1.9", paddingLeft: "20px", marginBottom: 0 }}>
+          <h3
+            style={{
+              marginTop: 0,
+              marginBottom: "10px",
+              color: "#166534",
+            }}
+          >
+            提交前提醒
+          </h3>
+          <ul
+            style={{
+              margin: 0,
+              paddingLeft: "20px",
+              color: "#166534",
+              lineHeight: 1.8,
+            }}
+          >
             <li>请确认基本信息无误</li>
             <li>请确认问卷作答内容已经填写完整</li>
-            <li>当前点击提交后将进入AI分析结果页（可能需要30-60秒分析时间）</li>
+            <li>点击提交后将创建分析任务，并跳转到结果页查看进度</li>
           </ul>
-        </div>
+        </section>
 
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
           <Link href="/questionnaire/page/5">
@@ -290,23 +422,59 @@ export default function ConfirmPage() {
             </button>
           </Link>
 
-          <Link href="/result/real">
-            <button
-              style={{
-                backgroundColor: "#16a34a",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-                fontWeight: 700,
-              }}
-            >
-              确认提交
-            </button>
-          </Link>
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            style={{
+              backgroundColor: isSubmitting ? "#86efac" : "#16a34a",
+              color: "#fff",
+              border: "none",
+              borderRadius: "10px",
+              padding: "12px 22px",
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+              fontWeight: 700,
+            }}
+          >
+            {isSubmitting ? "提交中..." : "确认提交"}
+          </button>
         </div>
+
+        {submitError && (
+          <p style={{ color: "#dc2626", marginTop: "12px" }}>{submitError}</p>
+        )}
       </div>
     </main>
+  );
+}
+
+function InfoItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div
+      style={{
+        border: "1px solid #e5e7eb",
+        borderRadius: "12px",
+        padding: "14px",
+        backgroundColor: "#fafafa",
+      }}
+    >
+      <div
+        style={{
+          fontSize: "13px",
+          color: "#6b7280",
+          marginBottom: "6px",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontSize: "15px",
+          color: "#111827",
+          fontWeight: 600,
+        }}
+      >
+        {value || "未填写"}
+      </div>
+    </div>
   );
 }
