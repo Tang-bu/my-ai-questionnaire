@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
+import { buildNormalizedResult } from "@/app/lib/ai/score-analysis";
 import { getAuthenticatedContext } from '@/app/lib/auth';
 import { analyzeWithSiliconFlow } from '@/app/lib/ai/siliconflow';
 
@@ -132,21 +132,29 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
     const analysis = await analyzeWithSiliconFlow(task.prompt);
 
-    const reportData = {
-      overallAssessment: analysis.structuredResult.overallAssessment ?? '',
-      safetyLevel: analysis.structuredResult.safetyLevel ?? '未评定',
-      score: analysis.structuredResult.score ?? null,
-      strengths: analysis.structuredResult.strengths ?? [],
-      weaknesses: analysis.structuredResult.weaknesses ?? [],
-      recommendations: analysis.structuredResult.recommendations ?? [],
-      keyRisks: analysis.structuredResult.keyRisks ?? [],
-      trainingNeeds: analysis.structuredResult.trainingNeeds ?? [],
-      metadata: {
-        provider: 'siliconflow',
-        model: analysis.model,
-        processingTimeMs: analysis.processingTimeMs,
-      },
-    };
+    const structured = analysis.structuredResult as Record<string, any>;
+
+const { dimensions, normalized } = buildNormalizedResult(
+  structured.dimensions ?? {}
+);
+
+const reportData = {
+  overallAssessment: structured.overallAssessment ?? "",
+  safetyLevel: normalized.safetyLevel,
+  awarenessType: normalized.awarenessType,
+  score: normalized.score,
+  dimensions,
+  strengths: structured.strengths ?? [],
+  weaknesses: structured.weaknesses ?? [],
+  recommendations: structured.recommendations ?? [],
+  keyRisks: structured.keyRisks ?? [],
+  trainingNeeds: structured.trainingNeeds ?? [],
+  metadata: {
+    provider: "siliconflow",
+    model: analysis.model,
+    processingTimeMs: analysis.processingTimeMs,
+  },
+};
 
     const { error: updateTaskError } = await supabase
       .from('ai_analysis_tasks')

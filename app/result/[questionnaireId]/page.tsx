@@ -10,7 +10,19 @@ type Props = {
 type ReportData = {
   overallAssessment?: string;
   safetyLevel?: string;
+  awarenessType?: string;
   score?: number | null;
+  dimensions?: {
+    safetyPriority?: number;
+    complianceAwareness?: number;
+    responsibilityAwareness?: number;
+    luckPsychology?: number;
+    conformityPsychology?: number;
+    riskIdentification?: number;
+    emergencyHandling?: number;
+    interventionWillingness?: number;
+    hazardReporting?: number;
+  };
   strengths?: string[];
   weaknesses?: string[];
   recommendations?: string[];
@@ -160,39 +172,64 @@ export default function ResultPage({ params }: Props) {
       )}
 
       {report && (
-        <section
-          style={{
-            border: '1px solid #e5e7eb',
-            borderRadius: 12,
-            padding: 20,
-          }}
-        >
-          <h2 style={{ marginTop: 0 }}>分析结论</h2>
-          <p>
-            <strong>安全意识等级：</strong>
-            {report.safetyLevel ?? '未评定'}
-          </p>
-          <p>
-            <strong>评分：</strong>
-            {report.score ?? '暂无'}
-          </p>
-          <p>
-            <strong>总体评估：</strong>
-            {report.overallAssessment ?? '暂无'}
-          </p>
+  <section
+    style={{
+      border: "1px solid #e5e7eb",
+      borderRadius: 12,
+      padding: 20,
+    }}
+  >
+    <h2 style={{ marginTop: 0 }}>分析结论</h2>
 
-          <RenderList title="优势" items={report.strengths} />
-          <RenderList title="不足" items={report.weaknesses} />
-          <RenderList title="建议" items={report.recommendations} />
-          <RenderList title="关键风险" items={report.keyRisks} />
-          <RenderList title="培训需求" items={report.trainingNeeds} />
+    <p>
+      <strong>安全意识等级：</strong>
+      {report.safetyLevel ?? "未评定"}
+    </p>
 
-          <div style={{ marginTop: 24, color: '#666', fontSize: 14 }}>
-            <p>模型：{report.metadata?.model ?? '-'}</p>
-            <p>耗时：{report.metadata?.processingTimeMs ?? '-'} ms</p>
-          </div>
-        </section>
-      )}
+    <p>
+      <strong>评分：</strong>
+      {report.score ?? "暂无"}
+    </p>
+
+    <p>
+      <strong>安全意识类型：</strong>
+      {report.awarenessType ?? "未判定"}
+    </p>
+
+    <p>
+      <strong>总体评估：</strong>
+      {report.overallAssessment ?? "暂无"}
+    </p>
+
+    {report.dimensions && (
+      <div style={{ marginTop: 24 }}>
+        <h3>维度评分</h3>
+        <ul style={{ lineHeight: 1.9, paddingLeft: 20 }}>
+          <li>安全优先意识：{report.dimensions.safetyPriority ?? "-"}</li>
+          <li>规范遵循意识：{report.dimensions.complianceAwareness ?? "-"}</li>
+          <li>责任担当意识：{report.dimensions.responsibilityAwareness ?? "-"}</li>
+          <li>侥幸心理：{report.dimensions.luckPsychology ?? "-"}</li>
+          <li>从众心理：{report.dimensions.conformityPsychology ?? "-"}</li>
+          <li>风险识别能力：{report.dimensions.riskIdentification ?? "-"}</li>
+          <li>应急处置能力：{report.dimensions.emergencyHandling ?? "-"}</li>
+          <li>违规干预意愿：{report.dimensions.interventionWillingness ?? "-"}</li>
+          <li>隐患上报意识：{report.dimensions.hazardReporting ?? "-"}</li>
+        </ul>
+      </div>
+    )}
+
+    <RenderList title="优势" items={report.strengths} />
+    <RenderList title="不足" items={report.weaknesses} />
+    <RenderList title="建议" items={report.recommendations} />
+    <RenderList title="关键风险" items={report.keyRisks} />
+    <RenderList title="培训需求" items={report.trainingNeeds} />
+
+    <div style={{ marginTop: 24, color: "#666", fontSize: 14 }}>
+      <p>模型：{report.metadata?.model ?? "-"}</p>
+      <p>耗时：{report.metadata?.processingTimeMs ?? "-"} ms</p>
+    </div>
+  </section>
+)}
     </main>
   );
 }
