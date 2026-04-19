@@ -1,195 +1,327 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-const defaultTemplate = `标准报告结构：
-1. 基本信息
-2. 综合评估结论
-3. 安全意识等级
-4. 主要表现
-5. 问题分析
-6. 改进建议
-
-字段说明：
-- 基本信息：姓名、工种、工龄、所属矿区/单位
-- 综合评估结论：对整体安全意识水平进行概括
-- 安全意识等级：按 A/B/C/D/E 等级输出
-- 主要表现：提炼用户的积极表现或已有基础
-- 问题分析：识别薄弱点和潜在风险
-- 改进建议：给出后续优化建议
-
-输出要求：
-- 结构统一
-- 表述规范
-- 字段完整
-- 便于展示与导出`;
+type ReportRow = {
+  id: string;
+  questionnaireId: string;
+  aiAnalysisId: string;
+  reportFormat: string;
+  generatedAt: string;
+  questionnaireStatus?: string | null;
+  createdAt?: string | null;
+  completedAt?: string | null;
+  basicInfo: {
+    name: string;
+    gender: string;
+    age: string;
+    jobType: string;
+    workYears: string;
+    mineArea: string;
+  };
+  score?: number | null;
+  safetyLevel?: string | null;
+  awarenessType?: string | null;
+};
 
 export default function AdminReportsPage() {
-  const [reportTemplate, setReportTemplate] = useState(defaultTemplate);
-  const [saveMessage, setSaveMessage] = useState("");
+  const [rows, setRows] = useState<ReportRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [levelFilter, setLevelFilter] = useState("all");
 
   useEffect(() => {
-    const savedTemplate = localStorage.getItem("adminReportTemplate");
-    if (savedTemplate) {
-      setReportTemplate(savedTemplate);
+    async function fetchReports() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch("/api/admin/reports", {
+          cache: "no-store",
+        });
+
+        const text = await response.text();
+
+        let json: any;
+        try {
+          json = JSON.parse(text);
+        } catch {
+          throw new Error(
+            `接口没有返回 JSON。状态码: ${response.status}，返回内容前80字符: ${text.slice(0, 80)}`
+          );
+        }
+
+        if (!response.ok || !json.success) {
+          throw new Error(json.message || "读取报告列表失败");
+        }
+
+        setRows(json.data ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "读取报告列表失败");
+      } finally {
+        setLoading(false);
+      }
     }
+
+    fetchReports();
   }, []);
 
-  const handleSaveTemplate = () => {
-    localStorage.setItem("adminReportTemplate", reportTemplate);
-    setSaveMessage("模板已保存");
-    setTimeout(() => {
-      setSaveMessage("");
-    }, 2000);
-  };
+  const filteredRows = useMemo(() => {
+    return rows.filter((row) => {
+      const matchesLevel =
+        levelFilter === "all" ? true : row.safetyLevel === levelFilter;
 
-  const handleResetTemplate = () => {
-    setReportTemplate(defaultTemplate);
-    setSaveMessage("已恢复默认模板，记得点击保存");
-  };
+      const searchText = [
+        row.id,
+        row.questionnaireId,
+        row.basicInfo.name,
+        row.basicInfo.mineArea,
+        row.basicInfo.jobType,
+        row.awarenessType,
+        row.safetyLevel,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const matchesKeyword = keyword.trim()
+        ? searchText.includes(keyword.trim().toLowerCase())
+        : true;
+
+      return matchesLevel && matchesKeyword;
+    });
+  }, [rows, keyword, levelFilter]);
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "40px 20px",
-        fontFamily: "Arial, sans-serif",
+        background: "#f8fafc",
+        padding: "32px 20px",
       }}
     >
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          display: "grid",
-          gap: "20px",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "20px",
-            padding: "28px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-          }}
-        >
-          <h1 style={{ marginTop: 0, color: "#111827" }}>报告管理</h1>
-          <p style={{ color: "#6b7280", lineHeight: "1.9", marginBottom: 0 }}>
-            这里用于管理标准报告模板结构。修改后请手动点击“保存模板”。
-          </p>
-        </div>
-
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "18px",
-            padding: "24px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-          }}
-        >
-          <h2 style={{ marginTop: 0, color: "#111827", fontSize: "20px" }}>
-            模板编辑区
-          </h2>
-          <p style={{ color: "#6b7280", lineHeight: "1.8" }}>
-            你可以在这里定义标准报告结构、字段和输出要求。
-          </p>
-
-          <textarea
-            value={reportTemplate}
-            onChange={(e) => setReportTemplate(e.target.value)}
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <header style={{ marginBottom: 24 }}>
+          <h1
             style={{
-              width: "100%",
-              minHeight: "420px",
-              padding: "16px",
-              borderRadius: "12px",
-              border: "1px solid #d1d5db",
-              fontSize: "15px",
-              lineHeight: "1.8",
-              resize: "vertical",
-              boxSizing: "border-box",
-            }}
-          />
-
-          <div
-            style={{
-              marginTop: "16px",
-              display: "flex",
-              gap: "12px",
-              flexWrap: "wrap",
-              alignItems: "center",
+              margin: 0,
+              fontSize: 32,
+              color: "#0f172a",
             }}
           >
-            <button
-              onClick={handleSaveTemplate}
+            后台报告管理
+          </h1>
+          <p
+            style={{
+              marginTop: 10,
+              color: "#64748b",
+              fontSize: 16,
+            }}
+          >
+            查看所有已生成报告、评分结果与类型判定
+          </p>
+        </header>
+
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 18,
+            padding: 20,
+            marginBottom: 20,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr",
+              gap: 12,
+            }}
+          >
+            <input
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="搜索姓名、矿区、工种、等级、类型、报告ID"
               style={{
-                backgroundColor: "#111827",
-                color: "#ffffff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 20px",
-                cursor: "pointer",
+                width: "100%",
+                padding: "12px 14px",
+                borderRadius: 12,
+                border: "1px solid #d1d5db",
+                fontSize: 14,
+                boxSizing: "border-box",
+              }}
+            />
+
+            <select
+              value={levelFilter}
+              onChange={(e) => setLevelFilter(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "12px 14px",
+                borderRadius: 12,
+                border: "1px solid #d1d5db",
+                fontSize: 14,
+                boxSizing: "border-box",
+                background: "#fff",
               }}
             >
-              保存模板
-            </button>
-
-            <button
-              onClick={handleResetTemplate}
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 20px",
-                cursor: "pointer",
-              }}
-            >
-              恢复默认模板
-            </button>
-
-            {saveMessage && (
-              <span style={{ color: "#16a34a", fontSize: "14px" }}>
-                {saveMessage}
-              </span>
-            )}
+              <option value="all">全部等级</option>
+              <option value="高">高</option>
+              <option value="中">中</option>
+              <option value="低">低</option>
+            </select>
           </div>
-        </div>
+        </section>
 
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <Link href="/admin">
-            <button
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              返回后台首页
-            </button>
-          </Link>
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 18,
+            padding: 20,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
+          }}
+        >
+          {loading && <p style={{ margin: 0 }}>加载中...</p>}
+          {error && <p style={{ margin: 0, color: "#dc2626" }}>{error}</p>}
 
-          <Link href="/admin/questionnaires">
-            <button
-              style={{
-                backgroundColor: "#111827",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              去问卷管理页
-            </button>
-          </Link>
-        </div>
+          {!loading && !error && (
+            <>
+              <div
+                style={{
+                  marginBottom: 14,
+                  color: "#64748b",
+                  fontSize: 14,
+                }}
+              >
+                共 {filteredRows.length} 份报告
+              </div>
+
+              <div style={{ overflowX: "auto" }}>
+                <table
+                  style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    minWidth: 1050,
+                  }}
+                >
+                  <thead>
+                    <tr style={{ background: "#f8fafc" }}>
+                      <Th>姓名</Th>
+                      <Th>矿区</Th>
+                      <Th>工种</Th>
+                      <Th>综合评分</Th>
+                      <Th>等级</Th>
+                      <Th>类型</Th>
+                      <Th>问卷状态</Th>
+                      <Th>生成时间</Th>
+                      <Th>操作</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRows.map((row) => (
+                      <tr key={row.id}>
+                        <Td>{row.basicInfo.name || "-"}</Td>
+                        <Td>{row.basicInfo.mineArea || "-"}</Td>
+                        <Td>{row.basicInfo.jobType || "-"}</Td>
+                        <Td>{row.score ?? "-"}</Td>
+                        <Td>
+                          {row.safetyLevel ? (
+                            <LevelBadge level={row.safetyLevel} />
+                          ) : (
+                            "-"
+                          )}
+                        </Td>
+                        <Td>{row.awarenessType ?? "-"}</Td>
+                        <Td>{row.questionnaireStatus ?? "-"}</Td>
+                        <Td>{formatDate(row.generatedAt)}</Td>
+                        <Td>
+                          <Link
+                            href={`/admin/reports/${row.id}`}
+                            style={{
+                              color: "#2563eb",
+                              fontWeight: 600,
+                              textDecoration: "none",
+                            }}
+                          >
+                            查看详情
+                          </Link>
+                        </Td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </section>
       </div>
     </main>
   );
+}
+
+function Th({ children }: { children: React.ReactNode }) {
+  return (
+    <th
+      style={{
+        textAlign: "left",
+        padding: "12px 14px",
+        borderBottom: "1px solid #e5e7eb",
+        color: "#475569",
+        fontSize: 14,
+        fontWeight: 700,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {children}
+    </th>
+  );
+}
+
+function Td({ children }: { children: React.ReactNode }) {
+  return (
+    <td
+      style={{
+        padding: "14px",
+        borderBottom: "1px solid #f1f5f9",
+        color: "#0f172a",
+        fontSize: 14,
+        verticalAlign: "top",
+      }}
+    >
+      {children}
+    </td>
+  );
+}
+
+function LevelBadge({ level }: { level: string }) {
+  const background =
+    level === "高" ? "#dcfce7" : level === "中" ? "#fef3c7" : "#fee2e2";
+
+  const color =
+    level === "高" ? "#166534" : level === "中" ? "#92400e" : "#b91c1c";
+
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        padding: "6px 10px",
+        borderRadius: 999,
+        background,
+        color,
+        fontSize: 12,
+        fontWeight: 700,
+      }}
+    >
+      {level}
+    </span>
+  );
+}
+
+function formatDate(value?: string | null) {
+  if (!value) return "-";
+  return new Date(value).toLocaleString("zh-CN");
 }
