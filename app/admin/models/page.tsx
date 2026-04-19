@@ -3,249 +3,368 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const defaultConfig = {
-  provider: "OpenAI",
-  modelName: "gpt-4o-mini",
-  temperature: "0.3",
-  maxTokens: "2000",
+const runtimeConfig = {
+  provider: "SiliconFlow",
+  modelName: "Qwen/Qwen2.5-14B-Instruct",
+  temperature: "0.2",
+  maxTokens: "2500",
+  responseFormat: "JSON Object",
+  status: "当前生产链路使用",
+};
+
+const defaultDraftConfig = {
+  provider: "SiliconFlow",
+  modelName: "Qwen/Qwen2.5-14B-Instruct",
+  temperature: "0.2",
+  maxTokens: "2500",
+  responseFormat: "JSON Object",
 };
 
 export default function AdminModelsPage() {
-  const [modelConfig, setModelConfig] = useState(defaultConfig);
+  const [draftConfig, setDraftConfig] = useState(defaultDraftConfig);
   const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
-    const savedModelConfig = localStorage.getItem("adminModelConfig");
-    if (savedModelConfig) {
-      setModelConfig(JSON.parse(savedModelConfig));
+    const saved = localStorage.getItem("adminModelConfigPreview");
+    if (saved) {
+      try {
+        setDraftConfig(JSON.parse(saved));
+      } catch {}
     }
   }, []);
 
-  const handleChange = (field: string, value: string) => {
-    setModelConfig((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  function handleChange(field: string, value: string) {
+    setDraftConfig((prev) => ({ ...prev, [field]: value }));
+  }
 
-  const handleResetConfig = () => {
-    setModelConfig(defaultConfig);
-    setSaveMessage("已恢复为默认配置，记得点击保存");
-  };
-
-  const handleSaveConfig = () => {
-    localStorage.setItem("adminModelConfig", JSON.stringify(modelConfig));
+  function handleSave() {
+    localStorage.setItem("adminModelConfigPreview", JSON.stringify(draftConfig));
     setSaveMessage("配置已保存");
-    setTimeout(() => {
-      setSaveMessage("");
-    }, 2000);
-  };
+    setTimeout(() => setSaveMessage(""), 2000);
+  }
+
+  function handleReset() {
+    setDraftConfig(defaultDraftConfig);
+    localStorage.setItem(
+      "adminModelConfigPreview",
+      JSON.stringify(defaultDraftConfig)
+    );
+    setSaveMessage("已恢复默认配置");
+    setTimeout(() => setSaveMessage(""), 2000);
+  }
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "40px 20px",
-        fontFamily: "Arial, sans-serif",
+        background: "#f8fafc",
+        padding: "32px 20px 48px",
       }}
     >
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          display: "grid",
-          gap: "20px",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "20px",
-            padding: "28px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-          }}
-        >
-          <h1 style={{ marginTop: 0, color: "#111827" }}>模型管理</h1>
-          <p style={{ color: "#6b7280", lineHeight: "1.9", marginBottom: 0 }}>
-            这里用于配置 AI 模型提供商、模型名称和基础调用参数。修改后请手动点击“保存配置”。
-          </p>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ marginBottom: 20 }}>
+          <Link
+            href="/admin"
+            style={{
+              color: "#2563eb",
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
+          >
+            ← 返回后台首页
+          </Link>
         </div>
 
-        <div
+        <section
           style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "18px",
-            padding: "24px",
+            background: "#fff",
             border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
+            borderRadius: 20,
+            padding: 24,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+            marginBottom: 20,
           }}
         >
-          <h2 style={{ marginTop: 0, color: "#111827", fontSize: "20px" }}>
-            模型配置区
-          </h2>
+          <h1 style={{ margin: 0, fontSize: 32, color: "#0f172a" }}>
+            模型管理
+          </h1>
+          <p
+            style={{
+              marginTop: 12,
+              color: "#64748b",
+              lineHeight: 1.8,
+              maxWidth: 900,
+            }}
+          >
+            查看当前分析链路使用的模型配置，并维护管理端配置草案。
+          </p>
+        </section>
 
-          <div style={{ display: "grid", gap: "16px" }}>
-            <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#374151" }}>
-                模型提供商
-              </label>
-              <select
-                value={modelConfig.provider}
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.1fr 1fr",
+            gap: 16,
+            marginBottom: 20,
+          }}
+        >
+          <ConfigCard
+            title="当前生产链路配置"
+            tag="已启用"
+            tagColor="#16a34a"
+            items={[
+              ["模型服务商", runtimeConfig.provider],
+              ["模型名称", runtimeConfig.modelName],
+              ["Temperature", runtimeConfig.temperature],
+              ["Max Tokens", runtimeConfig.maxTokens],
+              ["响应格式", runtimeConfig.responseFormat],
+              ["状态", runtimeConfig.status],
+            ]}
+          />
+
+          <ConfigCard
+            title="配置说明"
+            tag="配置"
+            tagColor="#2563eb"
+            items={[
+              ["运行模式", "固定生产配置"],
+              ["配置策略", "先验证后切换"],
+              ["稳定性要求", "评分规则优先保持一致"],
+              ["管理方式", "配置集中维护"],
+            ]}
+          />
+        </section>
+
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 20,
+            padding: 24,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+          }}
+        >
+          <h2 style={{ marginTop: 0, fontSize: 24 }}>配置草案维护</h2>
+          <p style={{ color: "#64748b", lineHeight: 1.8 }}>
+            可在此维护管理端配置草案，用于预览与整理。
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: 14,
+              marginTop: 16,
+            }}
+          >
+            <FormField label="模型服务商">
+              <input
+                value={draftConfig.provider}
                 onChange={(e) => handleChange("provider", e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "12px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid #d1d5db",
-                  fontSize: "15px",
-                  boxSizing: "border-box",
-                }}
-              >
-                <option value="OpenAI">OpenAI</option>
-                <option value="DeepSeek">DeepSeek</option>
-                <option value="Kimi">Kimi</option>
-                <option value="Qwen">Qwen</option>
-              </select>
-            </div>
+                style={inputStyle}
+              />
+            </FormField>
 
-            <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#374151" }}>
-                模型名称
-              </label>
+            <FormField label="模型名称">
               <input
-                type="text"
-                value={modelConfig.modelName}
+                value={draftConfig.modelName}
                 onChange={(e) => handleChange("modelName", e.target.value)}
-                placeholder="请输入模型名称"
-                style={{
-                  width: "100%",
-                  padding: "12px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid #d1d5db",
-                  fontSize: "15px",
-                  boxSizing: "border-box",
-                }}
+                style={inputStyle}
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#374151" }}>
-                Temperature
-              </label>
+            <FormField label="Temperature">
               <input
-                type="text"
-                value={modelConfig.temperature}
+                value={draftConfig.temperature}
                 onChange={(e) => handleChange("temperature", e.target.value)}
-                placeholder="例如 0.3"
-                style={{
-                  width: "100%",
-                  padding: "12px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid #d1d5db",
-                  fontSize: "15px",
-                  boxSizing: "border-box",
-                }}
+                style={inputStyle}
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label style={{ display: "block", marginBottom: "8px", color: "#374151" }}>
-                Max Tokens
-              </label>
+            <FormField label="Max Tokens">
               <input
-                type="text"
-                value={modelConfig.maxTokens}
+                value={draftConfig.maxTokens}
                 onChange={(e) => handleChange("maxTokens", e.target.value)}
-                placeholder="例如 2000"
-                style={{
-                  width: "100%",
-                  padding: "12px 14px",
-                  borderRadius: "10px",
-                  border: "1px solid #d1d5db",
-                  fontSize: "15px",
-                  boxSizing: "border-box",
-                }}
+                style={inputStyle}
               />
-            </div>
+            </FormField>
+
+            <FormField label="响应格式">
+              <input
+                value={draftConfig.responseFormat}
+                onChange={(e) => handleChange("responseFormat", e.target.value)}
+                style={inputStyle}
+              />
+            </FormField>
           </div>
 
           <div
             style={{
-              marginTop: "20px",
               display: "flex",
-              gap: "12px",
+              gap: 12,
+              marginTop: 18,
               flexWrap: "wrap",
-              alignItems: "center",
             }}
           >
-            <button
-              onClick={handleSaveConfig}
-              style={{
-                backgroundColor: "#111827",
-                color: "#ffffff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 20px",
-                cursor: "pointer",
-              }}
-            >
+            <button onClick={handleSave} style={primaryButtonStyle}>
               保存配置
             </button>
-
-            <button
-              onClick={handleResetConfig}
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 20px",
-                cursor: "pointer",
-              }}
-            >
-              恢复默认配置
+            <button onClick={handleReset} style={secondaryButtonStyle}>
+              恢复默认
             </button>
 
-            {saveMessage && (
-              <span style={{ color: "#16a34a", fontSize: "14px" }}>{saveMessage}</span>
-            )}
+            <Link href="/admin/prompt-preview">
+              <button style={darkButtonStyle}>查看输入预览</button>
+            </Link>
           </div>
-        </div>
 
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <Link href="/admin">
-            <button
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              返回后台首页
-            </button>
-          </Link>
-
-          <Link href="/admin/reports">
-            <button
-              style={{
-                backgroundColor: "#111827",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              去报告管理页
-            </button>
-          </Link>
-        </div>
+          {saveMessage && (
+            <p style={{ marginTop: 14, color: "#16a34a", fontWeight: 600 }}>
+              {saveMessage}
+            </p>
+          )}
+        </section>
       </div>
     </main>
   );
 }
+
+function ConfigCard({
+  title,
+  tag,
+  tagColor,
+  items,
+}: {
+  title: string;
+  tag: string;
+  tagColor: string;
+  items: [string, string][];
+}) {
+  return (
+    <section
+      style={{
+        background: "#fff",
+        border: "1px solid #e5e7eb",
+        borderRadius: 20,
+        padding: 20,
+        boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+      }}
+    >
+      <div
+        style={{
+          display: "inline-flex",
+          padding: "6px 10px",
+          borderRadius: 999,
+          background: `${tagColor}18`,
+          color: tagColor,
+          fontSize: 12,
+          fontWeight: 700,
+          marginBottom: 14,
+        }}
+      >
+        {tag}
+      </div>
+
+      <h2 style={{ marginTop: 0, fontSize: 22 }}>{title}</h2>
+
+      <div style={{ display: "grid", gap: 12 }}>
+        {items.map(([label, value]) => (
+          <div
+            key={label}
+            style={{
+              border: "1px solid #e5e7eb",
+              borderRadius: 14,
+              padding: 14,
+              background: "#fafafa",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 13,
+                color: "#64748b",
+                marginBottom: 6,
+              }}
+            >
+              {label}
+            </div>
+            <div
+              style={{
+                color: "#0f172a",
+                fontWeight: 700,
+                lineHeight: 1.6,
+                wordBreak: "break-word",
+              }}
+            >
+              {value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FormField({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label
+        style={{
+          display: "block",
+          marginBottom: 8,
+          fontSize: 14,
+          fontWeight: 600,
+          color: "#334155",
+        }}
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: 12,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  boxSizing: "border-box",
+  background: "#fff",
+};
+
+const primaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#2563eb",
+  color: "#fff",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
+const secondaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#e5e7eb",
+  color: "#111827",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
+const darkButtonStyle: React.CSSProperties = {
+  backgroundColor: "#0f172a",
+  color: "#fff",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};

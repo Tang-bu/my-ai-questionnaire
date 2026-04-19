@@ -22,6 +22,34 @@ const defaultQuestions: QuestionItem[] = [
   { id: 10, title: "如果系统根据你的答卷给出改进建议，你最希望它提供哪方面帮助？", guide: "" },
 ];
 
+const runtimeModelConfig = {
+  provider: "SiliconFlow",
+  modelName: "Qwen/Qwen2.5-14B-Instruct",
+  temperature: "0.2",
+  maxTokens: "2500",
+  responseFormat: "JSON Object",
+};
+
+const runtimePromptStructure = `请围绕以下 9 个维度评分，每个维度范围为 0-10 分：
+1. safetyPriority：安全优先意识
+2. complianceAwareness：规范遵循意识
+3. responsibilityAwareness：责任担当意识
+4. luckPsychology：侥幸心理（分越高表示风险越大）
+5. conformityPsychology：从众心理（分越高表示风险越大）
+6. riskIdentification：风险识别能力
+7. emergencyHandling：应急处置能力
+8. interventionWillingness：违规干预意愿
+9. hazardReporting：隐患上报/主动纠偏意识
+
+要求模型只返回 JSON，并包含：
+- dimensions
+- overallAssessment
+- strengths
+- blindSpots
+- keyRisks
+- recommendations
+- trainingNeeds`;
+
 export default function PromptPreviewPage() {
   const [basicInfo, setBasicInfo] = useState({
     name: "",
@@ -31,27 +59,14 @@ export default function PromptPreviewPage() {
     workYears: "",
     mineArea: "",
   });
-
-  const [questions, setQuestions] = useState<QuestionItem[]>(defaultQuestions);
-
-  const [promptTemplate, setPromptTemplate] = useState("");
-  const [reportTemplate, setReportTemplate] = useState("");
-  const [modelConfig, setModelConfig] = useState({
-    provider: "",
-    modelName: "",
-    temperature: "",
-    maxTokens: "",
-  });
-
+  const [questions, setQuestions] = useState(defaultQuestions);
+  const [template, setTemplate] = useState("");
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
   useEffect(() => {
     const savedBasicInfo = localStorage.getItem("basicInfo");
     const savedQuestions = localStorage.getItem("adminQuestions");
-    const savedPrompt = localStorage.getItem("adminPromptTemplate");
-    const savedReport = localStorage.getItem("adminReportTemplate");
-    const savedModel = localStorage.getItem("adminModelConfig");
-
+    const savedPrompt = localStorage.getItem("adminPromptTemplatePreview");
     const savedPage1 = localStorage.getItem("questionnairePage1");
     const savedPage2 = localStorage.getItem("questionnairePage2");
     const savedPage3 = localStorage.getItem("questionnairePage3");
@@ -60,9 +75,7 @@ export default function PromptPreviewPage() {
 
     if (savedBasicInfo) setBasicInfo(JSON.parse(savedBasicInfo));
     if (savedQuestions) setQuestions(JSON.parse(savedQuestions));
-    if (savedPrompt) setPromptTemplate(savedPrompt);
-    if (savedReport) setReportTemplate(savedReport);
-    if (savedModel) setModelConfig(JSON.parse(savedModel));
+    if (savedPrompt) setTemplate(savedPrompt);
 
     const page1 = savedPage1 ? JSON.parse(savedPage1) : {};
     const page2 = savedPage2 ? JSON.parse(savedPage2) : {};
@@ -101,145 +114,227 @@ export default function PromptPreviewPage() {
       })
       .join("\n\n");
 
-    const modelText = `模型提供商：${modelConfig.provider || "未设置"}
-模型名称：${modelConfig.modelName || "未设置"}
-Temperature：${modelConfig.temperature || "未设置"}
-Max Tokens：${modelConfig.maxTokens || "未设置"}`;
+    const modelText = `模型服务商：${runtimeModelConfig.provider}
+模型名称：${runtimeModelConfig.modelName}
+Temperature：${runtimeModelConfig.temperature}
+Max Tokens：${runtimeModelConfig.maxTokens}
+响应格式：${runtimeModelConfig.responseFormat}`;
 
     return `==============================
-一、系统角色与分析设定（Prompt 模板）
+一、当前生产分析 Prompt 结构
 ==============================
-${promptTemplate || "暂无 Prompt 模板内容"}
+${runtimePromptStructure}
 
 ==============================
-二、用户基本信息
+二、当前问卷对象基本信息
 ==============================
 ${basicInfoText}
 
 ==============================
-三、问卷题目与用户答案
+三、当前问卷题目与回答
 ==============================
 ${questionAnswerText}
 
 ==============================
-四、模型配置
+四、当前生产模型配置
 ==============================
 ${modelText}
 
 ==============================
-五、报告输出模板要求
+五、模板内容
 ==============================
-${reportTemplate || "暂无报告模板内容"}
-`;
-  }, [basicInfo, questions, answers, promptTemplate, modelConfig, reportTemplate]);
+${template || "暂无模板内容"}`;
+  }, [basicInfo, questions, answers, template]);
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "40px 20px",
-        fontFamily: "Arial, sans-serif",
+        background: "#f8fafc",
+        padding: "32px 20px 48px",
       }}
     >
-      <div
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          display: "grid",
-          gap: "20px",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "#111827",
-            color: "#ffffff",
-            borderRadius: "24px",
-            padding: "32px",
-          }}
-        >
-          <div
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ marginBottom: 20 }}>
+          <Link
+            href="/admin"
             style={{
-              display: "inline-block",
-              backgroundColor: "rgba(255,255,255,0.12)",
-              padding: "6px 12px",
-              borderRadius: "999px",
-              fontSize: "13px",
-              fontWeight: 700,
-              marginBottom: "14px",
+              color: "#2563eb",
+              textDecoration: "none",
+              fontWeight: 600,
             }}
           >
-            Prompt 拼装预览
-          </div>
-
-          <h1 style={{ marginTop: 0, marginBottom: "12px" }}>最终发送给 AI 的内容预览</h1>
-          <p style={{ color: "#d1d5db", lineHeight: "1.9", marginBottom: 0 }}>
-            当前页面会自动读取后台模板、模型配置、用户基本信息和问卷答案，并拼装成一份完整输入文本。
-          </p>
+            ← 返回后台首页
+          </Link>
         </div>
 
-        <div
+        <section
           style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "20px",
-            padding: "24px",
+            background: "#fff",
             border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
+            borderRadius: 20,
+            padding: 24,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+            marginBottom: 20,
           }}
         >
-          <h2 style={{ marginTop: 0, color: "#111827" }}>拼装结果</h2>
-          <p style={{ color: "#6b7280", lineHeight: "1.8" }}>
-            后续真正接 AI 时，可以直接把这里的内容作为请求体中的核心文本输入。
+          <h1 style={{ margin: 0, fontSize: 32, color: "#0f172a" }}>
+            输入拼装预览
+          </h1>
+          <p
+            style={{
+              marginTop: 12,
+              color: "#64748b",
+              lineHeight: 1.8,
+              maxWidth: 900,
+            }}
+          >
+            查看系统发送给 AI 的完整输入结构，包括角色设定、评分维度、用户信息、问卷内容与输出要求。
+          </p>
+        </section>
+
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: 16,
+            marginBottom: 20,
+          }}
+        >
+          <InfoCard
+            title="当前生产模型"
+            value={runtimeModelConfig.modelName}
+            subText={runtimeModelConfig.provider}
+          />
+          <InfoCard
+            title="响应格式"
+            value={runtimeModelConfig.responseFormat}
+            subText="用于结构化评分输出"
+          />
+          <InfoCard
+            title="评分维度数"
+            value="9"
+            subText="心理 + 行为能力维度"
+          />
+        </section>
+
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 20,
+            padding: 24,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+          }}
+        >
+          <h2 style={{ marginTop: 0, fontSize: 24 }}>输入内容预览</h2>
+          <p
+            style={{
+              color: "#64748b",
+              lineHeight: 1.8,
+            }}
+          >
+            以下展示当前配置下的输入拼装结果。
           </p>
 
           <div
             style={{
-              backgroundColor: "#f9fafb",
-              border: "1px solid #e5e7eb",
-              borderRadius: "12px",
-              padding: "18px",
+              background: "#0f172a",
+              color: "#e2e8f0",
+              borderRadius: 16,
+              padding: 18,
+              fontSize: 14,
+              lineHeight: 1.85,
               whiteSpace: "pre-wrap",
-              color: "#374151",
-              lineHeight: "1.8",
-              fontSize: "14px",
+              marginTop: 16,
+              overflowX: "auto",
             }}
           >
             {mergedPrompt}
           </div>
-        </div>
 
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <Link href="/admin">
-            <button
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              返回后台首页
-            </button>
-          </Link>
-
-          <Link href="/admin/prompts">
-            <button
-              style={{
-                backgroundColor: "#111827",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              返回 Prompt 管理页
-            </button>
-          </Link>
-        </div>
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              marginTop: 18,
+              flexWrap: "wrap",
+            }}
+          >
+            <Link href="/admin/prompts">
+              <button style={secondaryButtonStyle}>返回 Prompt 管理</button>
+            </Link>
+            <Link href="/admin/models">
+              <button style={darkButtonStyle}>查看模型配置</button>
+            </Link>
+          </div>
+        </section>
       </div>
     </main>
   );
 }
+
+function InfoCard({
+  title,
+  value,
+  subText,
+}: {
+  title: string;
+  value: string;
+  subText: string;
+}) {
+  return (
+    <div
+      style={{
+        background: "#fff",
+        border: "1px solid #e5e7eb",
+        borderRadius: 18,
+        padding: 20,
+        boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 13,
+          color: "#64748b",
+          marginBottom: 10,
+        }}
+      >
+        {title}
+      </div>
+      <div
+        style={{
+          fontSize: 22,
+          fontWeight: 800,
+          color: "#0f172a",
+          marginBottom: 8,
+          lineHeight: 1.3,
+          wordBreak: "break-word",
+        }}
+      >
+        {value}
+      </div>
+      <div style={{ color: "#94a3b8", fontSize: 13 }}>{subText}</div>
+    </div>
+  );
+}
+
+const secondaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#e5e7eb",
+  color: "#111827",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
+const darkButtonStyle: React.CSSProperties = {
+  backgroundColor: "#0f172a",
+  color: "#fff",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};

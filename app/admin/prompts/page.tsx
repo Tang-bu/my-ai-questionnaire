@@ -3,231 +3,254 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function AdminPromptsPage() {
-  const [promptTemplate, setPromptTemplate] = useState(`角色设定：
+const runtimePromptSummary = `当前生产分析链路采用固定已验证 Prompt，核心结构如下：
+
+1. 明确矿工安全意识评估角色
+2. 基于 9 个维度进行 0-10 分评分：
+   - 安全优先意识
+   - 规范遵循意识
+   - 责任担当意识
+   - 侥幸心理
+   - 从众心理
+   - 风险识别能力
+   - 应急处置能力
+   - 违规干预意愿
+   - 隐患上报意识
+3. 要求模型返回结构化 JSON
+4. 最终总分、等级、类型由后端统一规则计算`;
+
+const defaultDemoPrompt = `角色设定：
 你是一名矿工安全意识评估分析助手。
 
-行业背景：
-本项目面向矿工行业安全意识检测场景，围绕用户问卷作答内容展开分析。
-
 分析目标：
-请结合用户基本信息、问卷答案与安全意识评估要求，生成结构化分析结论。
+请根据用户基本信息与问卷作答，从安全优先意识、规范遵循意识、责任担当意识、侥幸心理、从众心理、风险识别能力、应急处置能力、违规干预意愿、隐患上报意识等维度进行分析，并输出结构化 JSON。
 
 输出要求：
-请输出标准化结果，包括：
-1. 综合评估结论
-2. 安全意识等级
-3. 主要表现
-4. 问题分析
-5. 改进建议`);
+1. 返回维度评分（0-10）
+2. 返回总体评估
+3. 返回主要优势表现
+4. 返回关键安全盲区
+5. 返回关键安全盲区与风险点
+6. 返回针对性改进建议
+7. 返回培训需求`;
 
-  // 新增：控制预览显示的状态
-  const [showPreview, setShowPreview] = useState(false);
+export default function AdminPromptsPage() {
+  const [template, setTemplate] = useState(defaultDemoPrompt);
+  const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
-    const savedPrompt = localStorage.getItem("adminPromptTemplate");
-    if (savedPrompt) {
-      setPromptTemplate(savedPrompt);
-    }
+    const saved = localStorage.getItem("adminPromptTemplatePreview");
+    if (saved) setTemplate(saved);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("adminPromptTemplate", promptTemplate);
-  }, [promptTemplate]);
+  function handleSave() {
+    localStorage.setItem("adminPromptTemplatePreview", template);
+    setSaveMessage("模板已保存");
+    setTimeout(() => setSaveMessage(""), 2000);
+  }
 
-  const handleResetPrompt = () => {
-    const defaultPrompt = `角色设定：
-你是一名矿工安全意识评估分析助手。
-
-行业背景：
-本项目面向矿工行业安全意识检测场景，围绕用户问卷作答内容展开分析。
-
-分析目标：
-请结合用户基本信息、问卷答案与安全意识评估要求，生成结构化分析结论。
-
-输出要求：
-请输出标准化结果，包括：
-1. 综合评估结论
-2. 安全意识等级
-3. 主要表现
-4. 问题分析
-5. 改进建议`;
-    setPromptTemplate(defaultPrompt);
-  };
+  function handleReset() {
+    setTemplate(defaultDemoPrompt);
+    localStorage.setItem("adminPromptTemplatePreview", defaultDemoPrompt);
+    setSaveMessage("已恢复默认模板");
+    setTimeout(() => setSaveMessage(""), 2000);
+  }
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "20px 16px",
-        fontFamily: "Arial, sans-serif",
-        // 响应式内边距
-        }}
+        background: "#f8fafc",
+        padding: "32px 20px 48px",
+      }}
     >
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
-          display: "grid",
-          gap: "16px",
-          // 响应式间距
-          }}
-      >
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "20px",
-            padding: "28px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-          }}
-        >
-          <h1 style={{ marginTop: 0, color: "#111827" }}>Prompt 管理</h1>
-          <p style={{ color: "#6b7280", lineHeight: "1.9", marginBottom: 0 }}>
-            这里用于管理提示词模板。当前为前端演示版，内容会自动保存在浏览器本地。
-          </p>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ marginBottom: 20 }}>
+          <Link
+            href="/admin"
+            style={{
+              color: "#2563eb",
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
+          >
+            ← 返回后台首页
+          </Link>
         </div>
 
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 20,
+            padding: 24,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+            marginBottom: 20,
+          }}
+        >
+          <h1 style={{ margin: 0, fontSize: 32, color: "#0f172a" }}>
+            Prompt 管理
+          </h1>
+          <p
+            style={{
+              marginTop: 12,
+              color: "#64748b",
+              lineHeight: 1.8,
+              maxWidth: 900,
+            }}
+          >
+            统一维护分析提示词模板、评分维度说明与输出结构要求。
+          </p>
+        </section>
+
         <div
           style={{
-            display: "flex",
-            flexDirection: "column", // 手机：垂直布局
-            gap: "16px",
-            // 响应式布局：手机垂直，桌面左右
-            }}
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 16,
+            marginBottom: 20,
+          }}
         >
-          <div
+          <section
             style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "18px",
-              padding: "24px",
+              background: "#fff",
               border: "1px solid #e5e7eb",
-              boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
+              borderRadius: 20,
+              padding: 22,
+              boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
             }}
           >
-            <h2 style={{ marginTop: 0, color: "#111827", fontSize: "20px" }}>
-              模板编辑区
-            </h2>
-            <p style={{ color: "#6b7280", lineHeight: "1.8" }}>
-              你可以在这里修改提示词内容，系统会自动保存。
-            </p>
-
-            <textarea
-              value={promptTemplate}
-              onChange={(e) => setPromptTemplate(e.target.value)}
-              style={{
-                width: "100%",
-                minHeight: "420px",
-                padding: "16px",
-                borderRadius: "12px",
-                border: "1px solid #d1d5db",
-                fontSize: "15px",
-                lineHeight: "1.8",
-                resize: "vertical",
-                boxSizing: "border-box",
-              }}
-            />
-
-            <div style={{ marginTop: "16px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
-              <button
-                onClick={handleResetPrompt}
-                style={{
-                  backgroundColor: "#e5e7eb",
-                  color: "#111827",
-                  border: "none",
-                  borderRadius: "10px",
-                  padding: "12px 20px",
-                  cursor: "pointer",
-                }}
-              >
-                恢复默认模板
-              </button>
-
-              {/* 手机端预览键 */}
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                style={{
-                  backgroundColor: "#dbeafe",
-                  color: "#1d4ed8",
-                  border: "1px solid #bfdbfe",
-                  borderRadius: "10px",
-                  padding: "12px 20px",
-                  cursor: "pointer",
-                  // 桌面端隐藏，手机端显示
-                  display: "block",
-                  }}
-              >
-                {showPreview ? "隐藏预览" : "显示预览"}
-              </button>
-            </div>
-          </div>
-
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "18px",
-              padding: "24px",
-              border: "1px solid #e5e7eb",
-              boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-            }}
-          >
-            <h2 style={{ marginTop: 0, color: "#111827", fontSize: "20px" }}>
-              当前模板预览
-            </h2>
-            <p style={{ color: "#6b7280", lineHeight: "1.8" }}>
-              后续这里可以继续接“问卷答案拼接预览”和“最终发送给 AI 的完整 Prompt 预览”。
-            </p>
-
+            <h2 style={{ marginTop: 0, fontSize: 22 }}>当前生产 Prompt 说明</h2>
             <div
               style={{
-                backgroundColor: "#f9fafb",
+                background: "#f8fafc",
                 border: "1px solid #e5e7eb",
-                borderRadius: "12px",
-                padding: "16px",
-                color: "#374151",
-                lineHeight: "1.8",
+                borderRadius: 14,
+                padding: 16,
+                color: "#334155",
+                lineHeight: 1.9,
                 whiteSpace: "pre-wrap",
-                minHeight: "420px",
+                minHeight: 320,
               }}
             >
-              {promptTemplate || "当前没有模板内容"}
+              {runtimePromptSummary}
             </div>
+          </section>
+
+          <section
+            style={{
+              background: "#fff",
+              border: "1px solid #e5e7eb",
+              borderRadius: 20,
+              padding: 22,
+              boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+            }}
+          >
+            <h2 style={{ marginTop: 0, fontSize: 22 }}>配置原则</h2>
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: 20,
+                color: "#334155",
+                lineHeight: 1.9,
+              }}
+            >
+              <li>统一评分维度定义。</li>
+              <li>统一结构化 JSON 输出要求。</li>
+              <li>总分、等级、类型由后端规则统一计算。</li>
+              <li>配置修改需验证后纳入生产链路。</li>
+            </ul>
+          </section>
+        </div>
+
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 20,
+            padding: 24,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+          }}
+        >
+          <h2 style={{ marginTop: 0, fontSize: 24 }}>模板内容维护</h2>
+          <p style={{ color: "#64748b", lineHeight: 1.8 }}>
+            可在此查看和维护模板内容，用于配置管理与预览。
+          </p>
+
+          <textarea
+            value={template}
+            onChange={(e) => setTemplate(e.target.value)}
+            style={{
+              width: "100%",
+              minHeight: 360,
+              padding: "16px",
+              borderRadius: "14px",
+              border: "1px solid #d1d5db",
+              fontSize: "15px",
+              lineHeight: "1.8",
+              resize: "vertical",
+              boxSizing: "border-box",
+              marginTop: 14,
+            }}
+          />
+
+          <div
+            style={{
+              marginTop: 16,
+              display: "flex",
+              gap: 12,
+              flexWrap: "wrap",
+            }}
+          >
+            <button onClick={handleSave} style={primaryButtonStyle}>
+              保存模板
+            </button>
+            <button onClick={handleReset} style={secondaryButtonStyle}>
+              恢复默认
+            </button>
+
+            <Link href="/admin/prompt-preview">
+              <button style={darkButtonStyle}>查看输入预览</button>
+            </Link>
           </div>
-        </div>
 
-        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <Link href="/admin">
-            <button
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              返回后台首页
-            </button>
-          </Link>
-
-          <Link href="/admin/models">
-            <button
-              style={{
-                backgroundColor: "#111827",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              去模型管理页
-            </button>
-          </Link>
-        </div>
+          {saveMessage && (
+            <p style={{ marginTop: 14, color: "#16a34a", fontWeight: 600 }}>
+              {saveMessage}
+            </p>
+          )}
+        </section>
       </div>
     </main>
   );
 }
+
+const primaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#2563eb",
+  color: "#fff",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
+const secondaryButtonStyle: React.CSSProperties = {
+  backgroundColor: "#e5e7eb",
+  color: "#111827",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
+const darkButtonStyle: React.CSSProperties = {
+  backgroundColor: "#0f172a",
+  color: "#fff",
+  border: "none",
+  borderRadius: 12,
+  padding: "12px 18px",
+  cursor: "pointer",
+  fontWeight: 700,
+};

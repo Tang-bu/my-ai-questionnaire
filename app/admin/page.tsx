@@ -1,220 +1,208 @@
 import Link from "next/link";
 
+const cards = [
+  {
+    title: "问卷管理",
+    desc: "查看所有提交问卷、分析状态与原始作答内容。",
+    href: "/admin/questionnaires",
+    tag: "问卷",
+    tagColor: "#16a34a",
+  },
+  {
+    title: "报告管理",
+    desc: "查看已生成的评估报告、评分结果与类型判定。",
+    href: "/admin/reports",
+    tag: "报告",
+    tagColor: "#2563eb",
+  },
+  {
+    title: "Prompt 管理",
+    desc: "统一维护分析提示词模板、评分维度说明与输出结构要求。",
+    href: "/admin/prompts",
+    tag: "配置",
+    tagColor: "#7c3aed",
+  },
+  {
+    title: "模型管理",
+    desc: "查看当前生产链路使用的模型配置，并维护配置草案。",
+    href: "/admin/models",
+    tag: "配置",
+    tagColor: "#d97706",
+  },
+  {
+    title: "输入拼装预览",
+    desc: "查看系统发送给 AI 的完整输入结构与拼装结果。",
+    href: "/admin/prompt-preview",
+    tag: "预览",
+    tagColor: "#0f766e",
+  },
+];
+
 export default function AdminHomePage() {
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "20px 16px",
-        fontFamily: "Arial, sans-serif",
-        // 响应式内边距（在生产部署中简化）
+        background: "#f8fafc",
+        padding: "32px 20px 48px",
       }}
     >
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
-          display: "grid",
-          gap: "16px",
-          // 响应式间距（在生产部署中简化）
-        }}
-      >
-        <div
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <section
           style={{
-            backgroundColor: "#111827",
-            color: "#ffffff",
-            borderRadius: "20px",
-            padding: "24px",
-            // 响应式内边距
-            }}
+            background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)",
+            color: "#fff",
+            borderRadius: 24,
+            padding: "28px 28px 24px",
+            boxShadow: "0 16px 40px rgba(15, 23, 42, 0.15)",
+            marginBottom: 24,
+          }}
         >
           <div
             style={{
               display: "inline-block",
-              backgroundColor: "rgba(255,255,255,0.12)",
-              padding: "6px 12px",
-              borderRadius: "999px",
-              fontSize: "12px",
+              padding: "8px 14px",
+              borderRadius: 999,
+              background: "rgba(255,255,255,0.12)",
+              fontSize: 14,
               fontWeight: 700,
-              marginBottom: "12px",
-              // 响应式字体
-              }}
+              marginBottom: 16,
+            }}
           >
             管理员后台
           </div>
 
           <h1
             style={{
-              marginTop: 0,
-              marginBottom: "10px",
-              fontSize: "24px",
-              lineHeight: "1.3",
-              // 响应式字体
-              }}
+              margin: 0,
+              fontSize: 42,
+              lineHeight: 1.2,
+              fontWeight: 800,
+            }}
           >
-            后台管理总览
+            后台管理中心
           </h1>
+
           <p
             style={{
-              color: "#d1d5db",
-              lineHeight: "1.6",
+              marginTop: 14,
               marginBottom: 0,
-              fontSize: "14px",
-              // 响应式字体
-              }}
+              color: "rgba(255,255,255,0.88)",
+              fontSize: 16,
+              lineHeight: 1.8,
+              maxWidth: 900,
+            }}
           >
-            这里用于管理问卷内容、提示词模板、模型配置和标准报告输出规则。
+            统一管理问卷数据、分析报告、提示词模板与模型配置。当前系统采用固定生产配置运行，优先保证评分规则与分析链路稳定。
           </p>
-        </div>
+        </section>
 
-        <div
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 20,
+            padding: 20,
+            boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+            marginBottom: 20,
+          }}
+        >
+          <h2 style={{ marginTop: 0, fontSize: 24, color: "#0f172a" }}>
+            系统概览
+          </h2>
+          <ul
+            style={{
+              margin: 0,
+              paddingLeft: 20,
+              color: "#334155",
+              lineHeight: 1.9,
+            }}
+          >
+            <li>前台已支持问卷填写与分析结果查看。</li>
+            <li>后台已支持问卷管理与报告管理。</li>
+            <li>配置模块用于统一维护分析模板、模型参数与输入结构说明。</li>
+            <li>当前版本采用固定生产配置运行，配置修改需验证后纳入生产链路。</li>
+          </ul>
+        </section>
+
+        <section
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr", // 手机单列
-            gap: "16px",
-            // 响应式网格
-            }}
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: 16,
+          }}
         >
-          <Link href="/admin/questionnaires" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                backgroundColor: "#ffffff",
-                borderRadius: "16px",
-                padding: "20px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-                // 响应式内边距
+          {cards.map((card) => (
+            <Link
+              key={card.title}
+              href={card.href}
+              style={{ textDecoration: "none" }}
+            >
+              <div
+                style={{
+                  background: "#fff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 20,
+                  padding: 22,
+                  boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
+                  minHeight: 180,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}
-            >
-              <h3
-                style={{
-                  marginTop: 0,
-                  color: "#111827",
-                  fontSize: "18px",
-                  marginBottom: "8px",
-                  // 响应式字体
-                  }}
               >
-                问卷管理
-              </h3>
-              <p
-                style={{
-                  color: "#6b7280",
-                  lineHeight: "1.6",
-                  marginBottom: 0,
-                  fontSize: "14px",
-                  // 响应式字体
+                <div>
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      background: `${card.tagColor}18`,
+                      color: card.tagColor,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      marginBottom: 14,
+                    }}
+                  >
+                    {card.tag}
+                  </span>
+
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: "#0f172a",
+                      fontSize: 24,
+                    }}
+                  >
+                    {card.title}
+                  </h3>
+
+                  <p
+                    style={{
+                      marginTop: 12,
+                      marginBottom: 0,
+                      color: "#64748b",
+                      lineHeight: 1.8,
+                    }}
+                  >
+                    {card.desc}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    marginTop: 18,
+                    color: "#2563eb",
+                    fontWeight: 700,
+                    fontSize: 14,
                   }}
-              >
-                维护题目、结构和问卷内容。
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/admin/prompts" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                backgroundColor: "#ffffff",
-                borderRadius: "16px",
-                padding: "20px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-                // 响应式内边距
-                }}
-            >
-              <h3
-                style={{
-                  marginTop: 0,
-                  color: "#111827",
-                  fontSize: "18px",
-                  marginBottom: "8px",
-                  // 响应式字体
-                  }}
-              >
-                Prompt 管理
-              </h3>
-              <p
-                style={{
-                  color: "#6b7280",
-                  lineHeight: "1.6",
-                  marginBottom: 0,
-                  fontSize: "14px",
-                  // 响应式字体
-                  }}
-              >
-                管理提示词模板和输出要求。
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/admin/models" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                backgroundColor: "#ffffff",
-                borderRadius: "18px",
-                padding: "24px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-              }}
-            >
-              <h3 style={{ marginTop: 0, color: "#111827" }}>模型管理</h3>
-              <p style={{ color: "#6b7280", lineHeight: "1.8", marginBottom: 0 }}>
-                配置模型类型、参数与切换逻辑。
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/admin/reports" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                backgroundColor: "#ffffff",
-                borderRadius: "18px",
-                padding: "24px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-              }}
-            >
-              <h3 style={{ marginTop: 0, color: "#111827" }}>报告管理</h3>
-              <p style={{ color: "#6b7280", lineHeight: "1.8", marginBottom: 0 }}>
-                管理报告模板、字段和格式化规则。
-              </p>
-            </div>
-          </Link>
-          <Link href="/admin/prompt-preview" style={{ textDecoration: "none" }}>
-  <div
-    style={{
-      backgroundColor: "#ffffff",
-      borderRadius: "18px",
-      padding: "24px",
-      border: "1px solid #e5e7eb",
-      boxShadow: "0 8px 20px rgba(15,23,42,0.05)",
-    }}
-  >
-    <h3 style={{ marginTop: 0, color: "#111827" }}>Prompt 拼装预览</h3>
-    <p style={{ color: "#6b7280", lineHeight: "1.8", marginBottom: 0 }}>
-      查看系统准备发送给 AI 的完整输入内容。
-    </p>
-  </div>
-</Link>
-        </div>
-
-        <div>
-          <Link href="/">
-            <button
-              style={{
-                backgroundColor: "#e5e7eb",
-                color: "#111827",
-                border: "none",
-                borderRadius: "10px",
-                padding: "12px 22px",
-                cursor: "pointer",
-              }}
-            >
-              返回首页
-            </button>
-          </Link>
-        </div>
+                >
+                  进入模块 →
+                </div>
+              </div>
+            </Link>
+          ))}
+        </section>
       </div>
     </main>
   );

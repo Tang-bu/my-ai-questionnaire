@@ -165,18 +165,7 @@ export default function QuestionnairePage1() {
             />
 
             <div style={{ marginTop: "12px" }}>
-              <button
-                style={{
-                  backgroundColor: "#eff6ff",
-                  color: "#1d4ed8",
-                  border: "1px solid #bfdbfe",
-                  borderRadius: "10px",
-                  padding: "10px 16px",
-                  cursor: "pointer",
-                }}
-              >
-                语音输入（后续接入）
-              </button>
+              
             </div>
           </div>
 
@@ -224,18 +213,7 @@ export default function QuestionnairePage1() {
             />
 
             <div style={{ marginTop: "12px" }}>
-              <button
-                style={{
-                  backgroundColor: "#eff6ff",
-                  color: "#1d4ed8",
-                  border: "1px solid #bfdbfe",
-                  borderRadius: "10px",
-                  padding: "10px 16px",
-                  cursor: "pointer",
-                }}
-              >
-                语音输入（后续接入）
-              </button>
+              
             </div>
           </div>
         </div>
