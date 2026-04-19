@@ -58,17 +58,18 @@ export default function AdminModelsPage() {
       style={{
         minHeight: "100vh",
         background: "#f8fafc",
-        padding: "32px 20px 48px",
+        padding: "20px 14px 40px",
       }}
     >
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <Link
             href="/admin"
             style={{
               color: "#2563eb",
               textDecoration: "none",
               fontWeight: 600,
+              fontSize: 15,
             }}
           >
             ← 返回后台首页
@@ -79,20 +80,27 @@ export default function AdminModelsPage() {
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 24,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
-            marginBottom: 20,
+            marginBottom: 18,
           }}
         >
-          <h1 style={{ margin: 0, fontSize: 32, color: "#0f172a" }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "clamp(30px, 8vw, 34px)",
+              color: "#0f172a",
+            }}
+          >
             模型管理
           </h1>
           <p
             style={{
-              marginTop: 12,
+              marginTop: 10,
               color: "#64748b",
               lineHeight: 1.8,
+              fontSize: "clamp(14px, 3.8vw, 16px)",
               maxWidth: 900,
             }}
           >
@@ -103,9 +111,9 @@ export default function AdminModelsPage() {
         <section
           style={{
             display: "grid",
-            gridTemplateColumns: "1.1fr 1fr",
-            gap: 16,
-            marginBottom: 20,
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: 14,
+            marginBottom: 18,
           }}
         >
           <ConfigCard
@@ -139,20 +147,27 @@ export default function AdminModelsPage() {
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 24,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
           }}
         >
-          <h2 style={{ marginTop: 0, fontSize: 24 }}>配置草案维护</h2>
-          <p style={{ color: "#64748b", lineHeight: 1.8 }}>
+          <h2
+            style={{
+              marginTop: 0,
+              fontSize: "clamp(24px, 6vw, 26px)",
+            }}
+          >
+            配置草案维护
+          </h2>
+          <p style={{ color: "#64748b", lineHeight: 1.8, fontSize: 15 }}>
             可在此维护管理端配置草案，用于预览与整理。
           </p>
 
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
               gap: 14,
               marginTop: 16,
             }}
@@ -202,7 +217,7 @@ export default function AdminModelsPage() {
             style={{
               display: "flex",
               gap: 12,
-              marginTop: 18,
+              marginTop: 16,
               flexWrap: "wrap",
             }}
           >
@@ -245,8 +260,8 @@ function ConfigCard({
       style={{
         background: "#fff",
         border: "1px solid #e5e7eb",
-        borderRadius: 20,
-        padding: 20,
+        borderRadius: 18,
+        padding: 18,
         boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
       }}
     >
@@ -259,13 +274,20 @@ function ConfigCard({
           color: tagColor,
           fontSize: 12,
           fontWeight: 700,
-          marginBottom: 14,
+          marginBottom: 12,
         }}
       >
         {tag}
       </div>
 
-      <h2 style={{ marginTop: 0, fontSize: 22 }}>{title}</h2>
+      <h2
+        style={{
+          marginTop: 0,
+          fontSize: "clamp(22px, 5vw, 24px)",
+        }}
+      >
+        {title}
+      </h2>
 
       <div style={{ display: "grid", gap: 12 }}>
         {items.map(([label, value]) => (
@@ -293,6 +315,7 @@ function ConfigCard({
                 fontWeight: 700,
                 lineHeight: 1.6,
                 wordBreak: "break-word",
+                fontSize: 15,
               }}
             >
               {value}
@@ -329,17 +352,17 @@ function FormField({
   );
 }
 
-const inputStyle: React.CSSProperties = {
+const inputStyle = {
   width: "100%",
   padding: "12px 14px",
   borderRadius: 12,
   border: "1px solid #d1d5db",
   fontSize: 14,
-  boxSizing: "border-box",
+  boxSizing: "border-box" as const,
   background: "#fff",
 };
 
-const primaryButtonStyle: React.CSSProperties = {
+const primaryButtonStyle = {
   backgroundColor: "#2563eb",
   color: "#fff",
   border: "none",
@@ -349,7 +372,7 @@ const primaryButtonStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const secondaryButtonStyle: React.CSSProperties = {
+const secondaryButtonStyle = {
   backgroundColor: "#e5e7eb",
   color: "#111827",
   border: "none",
@@ -359,7 +382,7 @@ const secondaryButtonStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const darkButtonStyle: React.CSSProperties = {
+const darkButtonStyle = {
   backgroundColor: "#0f172a",
   color: "#fff",
   border: "none",

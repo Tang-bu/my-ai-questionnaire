@@ -19,7 +19,7 @@ const runtimePromptSummary = `当前生产分析链路采用固定已验证 Prom
 3. 要求模型返回结构化 JSON
 4. 最终总分、等级、类型由后端统一规则计算`;
 
-const defaultDemoPrompt = `角色设定：
+const defaultTemplate = `角色设定：
 你是一名矿工安全意识评估分析助手。
 
 分析目标：
@@ -35,7 +35,7 @@ const defaultDemoPrompt = `角色设定：
 7. 返回培训需求`;
 
 export default function AdminPromptsPage() {
-  const [template, setTemplate] = useState(defaultDemoPrompt);
+  const [template, setTemplate] = useState(defaultTemplate);
   const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
@@ -50,8 +50,8 @@ export default function AdminPromptsPage() {
   }
 
   function handleReset() {
-    setTemplate(defaultDemoPrompt);
-    localStorage.setItem("adminPromptTemplatePreview", defaultDemoPrompt);
+    setTemplate(defaultTemplate);
+    localStorage.setItem("adminPromptTemplatePreview", defaultTemplate);
     setSaveMessage("已恢复默认模板");
     setTimeout(() => setSaveMessage(""), 2000);
   }
@@ -61,17 +61,18 @@ export default function AdminPromptsPage() {
       style={{
         minHeight: "100vh",
         background: "#f8fafc",
-        padding: "32px 20px 48px",
+        padding: "20px 14px 40px",
       }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <Link
             href="/admin"
             style={{
               color: "#2563eb",
               textDecoration: "none",
               fontWeight: 600,
+              fontSize: 15,
             }}
           >
             ← 返回后台首页
@@ -82,20 +83,27 @@ export default function AdminPromptsPage() {
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 24,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
-            marginBottom: 20,
+            marginBottom: 18,
           }}
         >
-          <h1 style={{ margin: 0, fontSize: 32, color: "#0f172a" }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "clamp(30px, 8vw, 34px)",
+              color: "#0f172a",
+            }}
+          >
             Prompt 管理
           </h1>
           <p
             style={{
-              marginTop: 12,
+              marginTop: 10,
               color: "#64748b",
               lineHeight: 1.8,
+              fontSize: "clamp(14px, 3.8vw, 16px)",
               maxWidth: 900,
             }}
           >
@@ -106,21 +114,28 @@ export default function AdminPromptsPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 16,
-            marginBottom: 20,
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: 14,
+            marginBottom: 18,
           }}
         >
           <section
             style={{
               background: "#fff",
               border: "1px solid #e5e7eb",
-              borderRadius: 20,
-              padding: 22,
+              borderRadius: 18,
+              padding: 18,
               boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
             }}
           >
-            <h2 style={{ marginTop: 0, fontSize: 22 }}>当前生产 Prompt 说明</h2>
+            <h2
+              style={{
+                marginTop: 0,
+                fontSize: "clamp(22px, 5vw, 24px)",
+              }}
+            >
+              当前生产 Prompt 说明
+            </h2>
             <div
               style={{
                 background: "#f8fafc",
@@ -130,7 +145,7 @@ export default function AdminPromptsPage() {
                 color: "#334155",
                 lineHeight: 1.9,
                 whiteSpace: "pre-wrap",
-                minHeight: 320,
+                fontSize: 15,
               }}
             >
               {runtimePromptSummary}
@@ -141,18 +156,26 @@ export default function AdminPromptsPage() {
             style={{
               background: "#fff",
               border: "1px solid #e5e7eb",
-              borderRadius: 20,
-              padding: 22,
+              borderRadius: 18,
+              padding: 18,
               boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
             }}
           >
-            <h2 style={{ marginTop: 0, fontSize: 22 }}>配置原则</h2>
+            <h2
+              style={{
+                marginTop: 0,
+                fontSize: "clamp(22px, 5vw, 24px)",
+              }}
+            >
+              配置原则
+            </h2>
             <ul
               style={{
                 margin: 0,
                 paddingLeft: 20,
                 color: "#334155",
                 lineHeight: 1.9,
+                fontSize: 15,
               }}
             >
               <li>统一评分维度定义。</li>
@@ -167,13 +190,20 @@ export default function AdminPromptsPage() {
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 24,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
           }}
         >
-          <h2 style={{ marginTop: 0, fontSize: 24 }}>模板内容维护</h2>
-          <p style={{ color: "#64748b", lineHeight: 1.8 }}>
+          <h2
+            style={{
+              marginTop: 0,
+              fontSize: "clamp(24px, 6vw, 26px)",
+            }}
+          >
+            模板内容维护
+          </h2>
+          <p style={{ color: "#64748b", lineHeight: 1.8, fontSize: 15 }}>
             可在此查看和维护模板内容，用于配置管理与预览。
           </p>
 
@@ -182,15 +212,15 @@ export default function AdminPromptsPage() {
             onChange={(e) => setTemplate(e.target.value)}
             style={{
               width: "100%",
-              minHeight: 360,
-              padding: "16px",
-              borderRadius: "14px",
+              minHeight: 320,
+              padding: 16,
+              borderRadius: 14,
               border: "1px solid #d1d5db",
-              fontSize: "15px",
-              lineHeight: "1.8",
+              fontSize: 15,
+              lineHeight: 1.8,
               resize: "vertical",
               boxSizing: "border-box",
-              marginTop: 14,
+              marginTop: 12,
             }}
           />
 
@@ -225,7 +255,7 @@ export default function AdminPromptsPage() {
   );
 }
 
-const primaryButtonStyle: React.CSSProperties = {
+const primaryButtonStyle = {
   backgroundColor: "#2563eb",
   color: "#fff",
   border: "none",
@@ -235,7 +265,7 @@ const primaryButtonStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const secondaryButtonStyle: React.CSSProperties = {
+const secondaryButtonStyle = {
   backgroundColor: "#e5e7eb",
   color: "#111827",
   border: "none",
@@ -245,7 +275,7 @@ const secondaryButtonStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const darkButtonStyle: React.CSSProperties = {
+const darkButtonStyle = {
   backgroundColor: "#0f172a",
   color: "#fff",
   border: "none",

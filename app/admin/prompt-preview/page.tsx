@@ -5,22 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 
 type QuestionItem = {
   id: number;
+  order?: number;
   title: string;
-  guide: string;
+  guide?: string;
 };
-
-const defaultQuestions: QuestionItem[] = [
-  { id: 1, title: "请描述你在日常工作中对安全规范的理解。", guide: "" },
-  { id: 2, title: "当你发现施工环境存在隐患时，通常会怎么做？", guide: "" },
-  { id: 3, title: "你认为在矿工作业中，最容易被忽视的安全风险是什么？", guide: "" },
-  { id: 4, title: "遇到突发情况时，你通常会优先考虑哪些处理步骤？", guide: "" },
-  { id: 5, title: "你平时是否会主动学习或关注安全生产相关知识？", guide: "" },
-  { id: 6, title: "当同事存在不安全操作时，你通常会怎样处理？", guide: "" },
-  { id: 7, title: "你认为安全意识强的员工通常具备哪些特点？", guide: "" },
-  { id: 8, title: "你所在的工作环境中，哪些因素最容易影响安全操作执行？", guide: "" },
-  { id: 9, title: "你认为自己在安全意识方面最需要提升的地方是什么？", guide: "" },
-  { id: 10, title: "如果系统根据你的答卷给出改进建议，你最希望它提供哪方面帮助？", guide: "" },
-];
 
 const runtimeModelConfig = {
   provider: "SiliconFlow",
@@ -59,13 +47,13 @@ export default function PromptPreviewPage() {
     workYears: "",
     mineArea: "",
   });
-  const [questions, setQuestions] = useState(defaultQuestions);
   const [template, setTemplate] = useState("");
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [questions, setQuestions] = useState<QuestionItem[]>([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
 
   useEffect(() => {
     const savedBasicInfo = localStorage.getItem("basicInfo");
-    const savedQuestions = localStorage.getItem("adminQuestions");
     const savedPrompt = localStorage.getItem("adminPromptTemplatePreview");
     const savedPage1 = localStorage.getItem("questionnairePage1");
     const savedPage2 = localStorage.getItem("questionnairePage2");
@@ -74,7 +62,6 @@ export default function PromptPreviewPage() {
     const savedPage5 = localStorage.getItem("questionnairePage5");
 
     if (savedBasicInfo) setBasicInfo(JSON.parse(savedBasicInfo));
-    if (savedQuestions) setQuestions(JSON.parse(savedQuestions));
     if (savedPrompt) setTemplate(savedPrompt);
 
     const page1 = savedPage1 ? JSON.parse(savedPage1) : {};
@@ -97,6 +84,37 @@ export default function PromptPreviewPage() {
     });
   }, []);
 
+  useEffect(() => {
+    async function fetchQuestions() {
+      try {
+        setLoadingQuestions(true);
+        const response = await fetch("/api/questions", { cache: "no-store" });
+        const json = await response.json();
+
+        if (response.ok && json?.data?.allQuestions) {
+          const normalized = (json.data.allQuestions as any[])
+            .map((q) => ({
+              id: Number(q.id ?? q.order),
+              order: Number(q.order ?? q.id),
+              title: String(q.title ?? q.question_text ?? ""),
+              guide: String(q.guide ?? q.guide_text ?? ""),
+            }))
+            .sort((a, b) => (a.order ?? a.id) - (b.order ?? b.id));
+
+          setQuestions(normalized);
+        } else {
+          setQuestions([]);
+        }
+      } catch {
+        setQuestions([]);
+      } finally {
+        setLoadingQuestions(false);
+      }
+    }
+
+    fetchQuestions();
+  }, []);
+
   const mergedPrompt = useMemo(() => {
     const basicInfoText = `姓名：${basicInfo.name || "未填写"}
 性别：${basicInfo.gender || "未填写"}
@@ -105,14 +123,17 @@ export default function PromptPreviewPage() {
 工龄：${basicInfo.workYears || "未填写"}
 所属矿区/单位：${basicInfo.mineArea || "未填写"}`;
 
-    const questionAnswerText = questions
-      .map((q) => {
-        const answer = answers[q.id] || "未填写";
-        return `【题目${q.id}】
+    const questionAnswerText =
+      questions.length > 0
+        ? questions
+            .map((q) => {
+              const answer = answers[q.id] || "未填写";
+              return `【题目${q.id}】
 题目：${q.title}
 回答：${answer}`;
-      })
-      .join("\n\n");
+            })
+            .join("\n\n")
+        : "题库加载中或暂无题目数据";
 
     const modelText = `模型服务商：${runtimeModelConfig.provider}
 模型名称：${runtimeModelConfig.modelName}
@@ -151,17 +172,18 @@ ${template || "暂无模板内容"}`;
       style={{
         minHeight: "100vh",
         background: "#f8fafc",
-        padding: "32px 20px 48px",
+        padding: "20px 14px 40px",
       }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <Link
             href="/admin"
             style={{
               color: "#2563eb",
               textDecoration: "none",
               fontWeight: 600,
+              fontSize: 15,
             }}
           >
             ← 返回后台首页
@@ -172,20 +194,27 @@ ${template || "暂无模板内容"}`;
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 24,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
-            marginBottom: 20,
+            marginBottom: 18,
           }}
         >
-          <h1 style={{ margin: 0, fontSize: 32, color: "#0f172a" }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "clamp(30px, 8vw, 34px)",
+              color: "#0f172a",
+            }}
+          >
             输入拼装预览
           </h1>
           <p
             style={{
-              marginTop: 12,
+              marginTop: 10,
               color: "#64748b",
               lineHeight: 1.8,
+              fontSize: "clamp(14px, 3.8vw, 16px)",
               maxWidth: 900,
             }}
           >
@@ -196,9 +225,9 @@ ${template || "暂无模板内容"}`;
         <section
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: 16,
-            marginBottom: 20,
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 14,
+            marginBottom: 18,
           }}
         >
           <InfoCard
@@ -216,24 +245,31 @@ ${template || "暂无模板内容"}`;
             value="9"
             subText="心理 + 行为能力维度"
           />
+          <InfoCard
+            title="题库状态"
+            value={loadingQuestions ? "加载中" : `${questions.length} 题`}
+            subText="直接读取当前题库接口"
+          />
         </section>
 
         <section
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 24,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
           }}
         >
-          <h2 style={{ marginTop: 0, fontSize: 24 }}>输入内容预览</h2>
-          <p
+          <h2
             style={{
-              color: "#64748b",
-              lineHeight: 1.8,
+              marginTop: 0,
+              fontSize: "clamp(24px, 6vw, 26px)",
             }}
           >
+            输入内容预览
+          </h2>
+          <p style={{ color: "#64748b", lineHeight: 1.8, fontSize: 15 }}>
             以下展示当前配置下的输入拼装结果。
           </p>
 
@@ -242,11 +278,11 @@ ${template || "暂无模板内容"}`;
               background: "#0f172a",
               color: "#e2e8f0",
               borderRadius: 16,
-              padding: 18,
+              padding: 16,
               fontSize: 14,
               lineHeight: 1.85,
               whiteSpace: "pre-wrap",
-              marginTop: 16,
+              marginTop: 14,
               overflowX: "auto",
             }}
           >
@@ -257,7 +293,7 @@ ${template || "暂无模板内容"}`;
             style={{
               display: "flex",
               gap: 12,
-              marginTop: 18,
+              marginTop: 16,
               flexWrap: "wrap",
             }}
           >
@@ -289,7 +325,7 @@ function InfoCard({
         background: "#fff",
         border: "1px solid #e5e7eb",
         borderRadius: 18,
-        padding: 20,
+        padding: 18,
         boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
       }}
     >
@@ -304,7 +340,7 @@ function InfoCard({
       </div>
       <div
         style={{
-          fontSize: 22,
+          fontSize: "clamp(24px, 6vw, 22px)",
           fontWeight: 800,
           color: "#0f172a",
           marginBottom: 8,
@@ -319,7 +355,7 @@ function InfoCard({
   );
 }
 
-const secondaryButtonStyle: React.CSSProperties = {
+const secondaryButtonStyle = {
   backgroundColor: "#e5e7eb",
   color: "#111827",
   border: "none",
@@ -329,7 +365,7 @@ const secondaryButtonStyle: React.CSSProperties = {
   fontWeight: 700,
 };
 
-const darkButtonStyle: React.CSSProperties = {
+const darkButtonStyle = {
   backgroundColor: "#0f172a",
   color: "#fff",
   border: "none",

@@ -44,7 +44,7 @@ export default function AdminHomePage() {
       style={{
         minHeight: "100vh",
         background: "#f8fafc",
-        padding: "32px 20px 48px",
+        padding: "20px 14px 40px",
       }}
     >
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -52,10 +52,10 @@ export default function AdminHomePage() {
           style={{
             background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)",
             color: "#fff",
-            borderRadius: 24,
-            padding: "28px 28px 24px",
+            borderRadius: 22,
+            padding: "22px 18px",
             boxShadow: "0 16px 40px rgba(15, 23, 42, 0.15)",
-            marginBottom: 24,
+            marginBottom: 18,
           }}
         >
           <div
@@ -64,9 +64,9 @@ export default function AdminHomePage() {
               padding: "8px 14px",
               borderRadius: 999,
               background: "rgba(255,255,255,0.12)",
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: 700,
-              marginBottom: 16,
+              marginBottom: 14,
             }}
           >
             管理员后台
@@ -75,7 +75,7 @@ export default function AdminHomePage() {
           <h1
             style={{
               margin: 0,
-              fontSize: 42,
+              fontSize: "clamp(30px, 8vw, 42px)",
               lineHeight: 1.2,
               fontWeight: 800,
             }}
@@ -85,10 +85,10 @@ export default function AdminHomePage() {
 
           <p
             style={{
-              marginTop: 14,
+              marginTop: 12,
               marginBottom: 0,
               color: "rgba(255,255,255,0.88)",
-              fontSize: 16,
+              fontSize: "clamp(14px, 3.8vw, 16px)",
               lineHeight: 1.8,
               maxWidth: 900,
             }}
@@ -101,13 +101,20 @@ export default function AdminHomePage() {
           style={{
             background: "#fff",
             border: "1px solid #e5e7eb",
-            borderRadius: 20,
-            padding: 20,
+            borderRadius: 18,
+            padding: 18,
             boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
-            marginBottom: 20,
+            marginBottom: 18,
           }}
         >
-          <h2 style={{ marginTop: 0, fontSize: 24, color: "#0f172a" }}>
+          <h2
+            style={{
+              marginTop: 0,
+              marginBottom: 12,
+              fontSize: "clamp(22px, 5vw, 26px)",
+              color: "#0f172a",
+            }}
+          >
             系统概览
           </h2>
           <ul
@@ -116,6 +123,7 @@ export default function AdminHomePage() {
               paddingLeft: 20,
               color: "#334155",
               lineHeight: 1.9,
+              fontSize: "clamp(14px, 3.8vw, 16px)",
             }}
           >
             <li>前台已支持问卷填写与分析结果查看。</li>
@@ -128,8 +136,8 @@ export default function AdminHomePage() {
         <section
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 16,
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 14,
           }}
         >
           {cards.map((card) => (
@@ -142,10 +150,10 @@ export default function AdminHomePage() {
                 style={{
                   background: "#fff",
                   border: "1px solid #e5e7eb",
-                  borderRadius: 20,
-                  padding: 22,
+                  borderRadius: 18,
+                  padding: 18,
                   boxShadow: "0 8px 24px rgba(15,23,42,0.05)",
-                  minHeight: 180,
+                  minHeight: 170,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -161,7 +169,7 @@ export default function AdminHomePage() {
                       color: card.tagColor,
                       fontSize: 12,
                       fontWeight: 700,
-                      marginBottom: 14,
+                      marginBottom: 12,
                     }}
                   >
                     {card.tag}
@@ -171,7 +179,8 @@ export default function AdminHomePage() {
                     style={{
                       margin: 0,
                       color: "#0f172a",
-                      fontSize: 24,
+                      fontSize: "clamp(22px, 5vw, 24px)",
+                      lineHeight: 1.3,
                     }}
                   >
                     {card.title}
@@ -179,10 +188,11 @@ export default function AdminHomePage() {
 
                   <p
                     style={{
-                      marginTop: 12,
+                      marginTop: 10,
                       marginBottom: 0,
                       color: "#64748b",
                       lineHeight: 1.8,
+                      fontSize: 15,
                     }}
                   >
                     {card.desc}
@@ -191,7 +201,7 @@ export default function AdminHomePage() {
 
                 <div
                   style={{
-                    marginTop: 18,
+                    marginTop: 16,
                     color: "#2563eb",
                     fontWeight: 700,
                     fontSize: 14,
