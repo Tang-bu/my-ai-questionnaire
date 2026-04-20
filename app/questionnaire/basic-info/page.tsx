@@ -287,7 +287,7 @@ export default function BasicInfoPage() {
             </button>
           </Link>
 
-          <Link href="/questionnaire/page/1" style={{ width: "100%" }}>
+          <Link href="/questionnaire/guided" style={{ width: "100%" }}>
             <button
               style={{
                 backgroundColor: "#2563eb",
@@ -303,7 +303,7 @@ export default function BasicInfoPage() {
                 // 响应式按钮
                 }}
             >
-              下一步：进入问卷第 1 页
+              下一步：开始答题
             </button>
           </Link>
         </div>

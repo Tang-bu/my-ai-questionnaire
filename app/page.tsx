@@ -107,7 +107,7 @@ export default function HomePage() {
             </button>
           </Link>
 
-          <Link href="/questionnaire/page/1" style={{ textDecoration: "none" }}>
+          <Link href="/questionnaire/basic-info" style={{ textDecoration: "none" }}>
             <button
               style={{
                 width: "100%",
@@ -121,7 +121,7 @@ export default function HomePage() {
                 cursor: "pointer",
               }}
             >
-              开始填写问卷
+              开始答题
             </button>
           </Link>
 

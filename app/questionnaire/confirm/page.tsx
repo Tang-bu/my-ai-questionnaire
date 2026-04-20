@@ -138,54 +138,38 @@ export default function ConfirmPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
+  const [allAnswers, setAllAnswers] = useState<Record<string, string>>({});
+
   useEffect(() => {
     const savedBasicInfo = localStorage.getItem("basicInfo");
-    const savedPage1 = localStorage.getItem("questionnairePage1");
-    const savedPage2 = localStorage.getItem("questionnairePage2");
-    const savedPage3 = localStorage.getItem("questionnairePage3");
-    const savedPage4 = localStorage.getItem("questionnairePage4");
-    const savedPage5 = localStorage.getItem("questionnairePage5");
+    const savedAllAnswers = localStorage.getItem("questionnaireAllAnswers");
     const savedQuestions = localStorage.getItem("adminQuestions");
 
     if (savedBasicInfo) setBasicInfo(JSON.parse(savedBasicInfo));
-    if (savedPage1) setPage1(JSON.parse(savedPage1));
-    if (savedPage2) setPage2(JSON.parse(savedPage2));
-    if (savedPage3) setPage3(JSON.parse(savedPage3));
-    if (savedPage4) setPage4(JSON.parse(savedPage4));
-    if (savedPage5) setPage5(JSON.parse(savedPage5));
+    if (savedAllAnswers) setAllAnswers(JSON.parse(savedAllAnswers));
     if (savedQuestions) setQuestions(JSON.parse(savedQuestions));
   }, []);
 
   const answers = useMemo<Record<string, string>>(
-    () => ({
-      "1": page1.question1,
-      "2": page1.question2,
-      "3": page2.question3,
-      "4": page2.question4,
-      "5": page3.question5,
-      "6": page3.question6,
-      "7": page4.question7,
-      "8": page4.question8,
-      "9": page5.question9,
-      "10": page5.question10,
-    }),
-    [page1, page2, page3, page4, page5]
+    () => {
+      const result: Record<string, string> = {};
+      for (let i = 1; i <= 10; i++) {
+        result[i.toString()] = allAnswers[`question${i}`] || "";
+      }
+      return result;
+    },
+    [allAnswers]
   );
 
   const answerMap = useMemo<Record<number, string>>(
-    () => ({
-      1: page1.question1,
-      2: page1.question2,
-      3: page2.question3,
-      4: page2.question4,
-      5: page3.question5,
-      6: page3.question6,
-      7: page4.question7,
-      8: page4.question8,
-      9: page5.question9,
-      10: page5.question10,
-    }),
-    [page1, page2, page3, page4, page5]
+    () => {
+      const result: Record<number, string> = {};
+      for (let i = 1; i <= 10; i++) {
+        result[i] = allAnswers[`question${i}`] || "";
+      }
+      return result;
+    },
+    [allAnswers]
   );
 
   async function handleSubmit() {
@@ -212,7 +196,7 @@ export default function ConfirmPage() {
 
       const { questionnaireId, taskId } = json.data;
 
-      router.push(`/result/${questionnaireId}?taskId=${taskId}`);
+      router.push(`/questionnaire/waiting?questionnaireId=${questionnaireId}&taskId=${taskId}`);
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "提交失败，请稍后重试"
@@ -407,7 +391,7 @@ export default function ConfirmPage() {
         </section>
 
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <Link href="/questionnaire/page/5">
+          <Link href="/questionnaire/guided">
             <button
               style={{
                 backgroundColor: "#e5e7eb",
@@ -418,7 +402,7 @@ export default function ConfirmPage() {
                 cursor: "pointer",
               }}
             >
-              返回上一页
+              返回修改
             </button>
           </Link>
 
