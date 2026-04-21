@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { DEFAULT_QUESTIONS } from "@/app/lib/questions";
 
 type QuestionItem = {
   id: number;
@@ -72,8 +73,10 @@ const defaultQuestions: QuestionItem[] = [
 ];
 
 export default function GuidedQuestionnairePage() {
+  void defaultQuestions;
+
   const router = useRouter();
-  const [questions, setQuestions] = useState<QuestionItem[]>(defaultQuestions);
+  const [questions, setQuestions] = useState<QuestionItem[]>(DEFAULT_QUESTIONS);
   const [currentPage, setCurrentPage] = useState(1);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [analysisResults, setAnalysisResults] = useState<Record<number, AnswerAnalysis>>({});
@@ -89,7 +92,7 @@ export default function GuidedQuestionnairePage() {
   const questionsPerPage = 2;
 
   useEffect(() => {
-    const savedQuestions = localStorage.getItem("adminQuestions");
+    const savedQuestions = null;
     if (savedQuestions) {
       try {
         const parsedQuestions = JSON.parse(savedQuestions);

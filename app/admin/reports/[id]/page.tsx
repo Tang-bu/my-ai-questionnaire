@@ -1,39 +1,70 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { DEFAULT_QUESTIONS } from "@/app/lib/questions";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
+type BasicInfo = {
+  name?: string;
+  gender?: string;
+  age?: string;
+  jobType?: string;
+  workYears?: string;
+  mineArea?: string;
+};
+
+type Dimensions = Record<string, unknown>;
+
+type ReportData = {
+  score?: unknown;
+  safetyLevel?: unknown;
+  awarenessType?: unknown;
+  overallAssessment?: string;
+  strengths?: unknown[];
+  blindSpots?: unknown[];
+  keyRisks?: unknown[];
+  recommendations?: unknown[];
+  trainingNeeds?: unknown[];
+  dimensions?: Dimensions;
+  metadata?: Record<string, unknown>;
+};
+
+type ReportDetail = {
+  id: string;
+  questionnaire_id?: string;
+  ai_analysis_id?: string;
+  report_data?: ReportData;
+  generated_at?: string;
+};
+
+type QuestionnaireDetail = {
+  basic_info?: BasicInfo;
+  answers?: Record<string, unknown>;
+};
+
+type TaskDetail = {
+  status?: string;
+  updated_at?: string;
+  error_message?: string | null;
+};
+
 type DetailData = {
-  report: any;
-  questionnaire: any;
-  task: any | null;
+  report: ReportDetail;
+  questionnaire: QuestionnaireDetail;
+  task: TaskDetail | null;
 };
 
 export default function AdminReportDetailPage({ params }: Props) {
-  const [id, setId] = useState("");
+  const { id } = use(params);
   const [data, setData] = useState<DetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    let mounted = true;
-
-    params.then((value) => {
-      if (mounted) setId(value.id);
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, [params]);
-
-  useEffect(() => {
-    if (!id) return;
-
     async function fetchDetail() {
       try {
         setLoading(true);
@@ -42,10 +73,9 @@ export default function AdminReportDetailPage({ params }: Props) {
         const response = await fetch(`/api/admin/reports/${id}`, {
           cache: "no-store",
         });
-
         const text = await response.text();
 
-        let json: any;
+        let json: { success?: boolean; message?: string; data?: DetailData };
         try {
           json = JSON.parse(text);
         } catch {
@@ -58,7 +88,7 @@ export default function AdminReportDetailPage({ params }: Props) {
           throw new Error(json.message || "读取报告详情失败");
         }
 
-        setData(json.data);
+        setData(json.data ?? null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "读取报告详情失败");
       } finally {
@@ -73,23 +103,10 @@ export default function AdminReportDetailPage({ params }: Props) {
   const dimensions = reportData.dimensions ?? {};
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#f8fafc",
-        padding: "32px 20px",
-      }}
-    >
+    <main style={mainStyle}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ marginBottom: 20 }}>
-          <Link
-            href="/admin/reports"
-            style={{
-              color: "#2563eb",
-              textDecoration: "none",
-              fontWeight: 600,
-            }}
-          >
+          <Link href="/admin/reports" style={linkStyle}>
             ← 返回报告列表
           </Link>
         </div>
@@ -158,47 +175,14 @@ export default function AdminReportDetailPage({ params }: Props) {
               <h2 style={h2Style}>结构化分析内容</h2>
               <ListBlock title="主要优势表现" items={reportData.strengths} />
               <ListBlock title="关键安全盲区" items={reportData.blindSpots} />
-              <ListBlock
-                title="关键安全盲区与风险点"
-                items={reportData.keyRisks}
-              />
-              <ListBlock
-                title="针对性改进建议"
-                items={reportData.recommendations}
-              />
+              <ListBlock title="关键安全盲区与风险点" items={reportData.keyRisks} />
+              <ListBlock title="针对性改进建议" items={reportData.recommendations} />
               <ListBlock title="培训需求" items={reportData.trainingNeeds} />
             </section>
 
             <section style={sectionStyle}>
               <h2 style={h2Style}>问卷答案</h2>
-              <div style={{ display: "grid", gap: 12 }}>
-                {Object.entries(data.questionnaire.answers ?? {}).map(
-                  ([key, value]) => (
-                    <div
-                      key={key}
-                      style={{
-                        border: "1px solid #e5e7eb",
-                        borderRadius: 12,
-                        padding: 14,
-                        background: "#fafafa",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 13,
-                          color: "#64748b",
-                          marginBottom: 6,
-                        }}
-                      >
-                        题目 {key}
-                      </div>
-                      <div style={{ color: "#0f172a", lineHeight: 1.8 }}>
-                        {String(value)}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
+              <AnswerList answers={data.questionnaire.answers ?? {}} />
             </section>
 
             <section style={sectionStyle}>
@@ -220,44 +204,43 @@ export default function AdminReportDetailPage({ params }: Props) {
   );
 }
 
-function InfoGrid({ data }: { data: [string, any][] }) {
+function AnswerList({ answers }: { answers: Record<string, unknown> }) {
+  const entries = Object.entries(answers).sort(
+    ([a], [b]) => Number(a) - Number(b)
+  );
+
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-        gap: 12,
-      }}
-    >
+    <div style={{ display: "grid", gap: 12 }}>
+      {entries.map(([key, value]) => {
+        const question = DEFAULT_QUESTIONS.find(
+          (item) => item.id === Number(key)
+        );
+
+        return (
+          <div key={key} style={cardStyle}>
+            <div style={{ fontSize: 13, color: "#64748b", marginBottom: 6 }}>
+              题目 {key}
+            </div>
+            {question && <div style={questionTitleStyle}>{question.title}</div>}
+            <div style={{ color: "#0f172a", lineHeight: 1.8 }}>
+              {String(value || "-")}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function InfoGrid({ data }: { data: [string, unknown][] }) {
+  return (
+    <div style={gridStyle}>
       {data.map(([label, value]) => (
-        <div
-          key={label}
-          style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: 12,
-            padding: 14,
-            background: "#fafafa",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 13,
-              color: "#64748b",
-              marginBottom: 6,
-            }}
-          >
+        <div key={label} style={cardStyle}>
+          <div style={{ fontSize: 13, color: "#64748b", marginBottom: 6 }}>
             {label}
           </div>
-          <div
-            style={{
-              color: "#0f172a",
-              fontWeight: 600,
-              lineHeight: 1.7,
-              wordBreak: "break-word",
-            }}
-          >
-            {value ?? "-"}
-          </div>
+          <div style={infoValueStyle}>{String(value ?? "-")}</div>
         </div>
       ))}
     </div>
@@ -266,52 +249,23 @@ function InfoGrid({ data }: { data: [string, any][] }) {
 
 function DetailBlock({ content }: { content?: string }) {
   return (
-    <div
-      style={{
-        border: "1px solid #e5e7eb",
-        borderRadius: 12,
-        padding: 14,
-        background: "#fafafa",
-        color: "#0f172a",
-        lineHeight: 1.9,
-      }}
-    >
+    <div style={{ ...cardStyle, color: "#0f172a", lineHeight: 1.9 }}>
       {content || "-"}
     </div>
   );
 }
 
-function ListBlock({
-  title,
-  items,
-}: {
-  title: string;
-  items?: string[];
-}) {
+function ListBlock({ title, items }: { title: string; items?: unknown[] }) {
   return (
     <div style={{ marginTop: 18 }}>
       <h3 style={{ fontSize: 18, marginBottom: 10 }}>{title}</h3>
-      <div
-        style={{
-          border: "1px solid #e5e7eb",
-          borderRadius: 12,
-          padding: 14,
-          background: "#fafafa",
-        }}
-      >
+      <div style={cardStyle}>
         {!items || items.length === 0 ? (
           <div style={{ color: "#94a3b8" }}>暂无数据</div>
         ) : (
-          <ul
-            style={{
-              margin: 0,
-              paddingLeft: 18,
-              color: "#0f172a",
-              lineHeight: 1.9,
-            }}
-          >
+          <ul style={{ margin: 0, paddingLeft: 18, color: "#0f172a", lineHeight: 1.9 }}>
             {items.map((item, index) => (
-              <li key={`${title}-${index}`}>{item}</li>
+              <li key={`${title}-${index}`}>{renderListItem(item)}</li>
             ))}
           </ul>
         )}
@@ -320,10 +274,32 @@ function ListBlock({
   );
 }
 
+function renderListItem(item: unknown) {
+  if (typeof item === "string" || typeof item === "number") {
+    return String(item);
+  }
+
+  if (item && typeof item === "object") {
+    const values = Object.entries(item as Record<string, unknown>)
+      .filter(([, value]) => value !== null && value !== undefined && value !== "")
+      .map(([key, value]) => `${fieldLabelMap[key] ?? key}: ${String(value)}`);
+
+    return values.length > 0 ? values.join("；") : "-";
+  }
+
+  return "-";
+}
+
 function formatDate(value?: string | null) {
   if (!value) return "-";
   return new Date(value).toLocaleString("zh-CN");
 }
+
+const mainStyle: React.CSSProperties = {
+  minHeight: "100vh",
+  background: "#f8fafc",
+  padding: "32px 20px",
+};
 
 const sectionStyle: React.CSSProperties = {
   background: "#fff",
@@ -351,4 +327,48 @@ const subStyle: React.CSSProperties = {
   color: "#64748b",
   fontSize: 14,
   wordBreak: "break-all",
+};
+
+const linkStyle: React.CSSProperties = {
+  color: "#2563eb",
+  textDecoration: "none",
+  fontWeight: 600,
+};
+
+const gridStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+  gap: 12,
+};
+
+const cardStyle: React.CSSProperties = {
+  border: "1px solid #e5e7eb",
+  borderRadius: 12,
+  padding: 14,
+  background: "#fafafa",
+};
+
+const infoValueStyle: React.CSSProperties = {
+  color: "#0f172a",
+  fontWeight: 600,
+  lineHeight: 1.7,
+  wordBreak: "break-word",
+};
+
+const questionTitleStyle: React.CSSProperties = {
+  color: "#111827",
+  fontWeight: 700,
+  lineHeight: 1.7,
+  marginBottom: 8,
+};
+
+const fieldLabelMap: Record<string, string> = {
+  title: "标题",
+  impact: "影响",
+  summary: "摘要",
+  scenario: "场景",
+  risk: "风险",
+  suggestion: "建议",
+  action: "行动",
+  evidence: "依据",
 };

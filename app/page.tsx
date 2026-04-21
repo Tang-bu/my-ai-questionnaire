@@ -1,248 +1,222 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createClient } from "@/app/lib/supabase/client";
+
+type SessionState = "loading" | "signed-in" | "signed-out";
 
 export default function HomePage() {
+  const supabase = createClient();
+  const [sessionState, setSessionState] = useState<SessionState>("loading");
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (mounted) {
+        setSessionState(session ? "signed-in" : "signed-out");
+      }
+    }
+
+    loadSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSessionState(session ? "signed-in" : "signed-out");
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
+
+  const isSignedIn = sessionState === "signed-in";
+  const adminHref = isSignedIn ? "/admin" : "/login?redirect=/admin";
+  const questionnaireHref = isSignedIn
+    ? "/questionnaire/basic-info"
+    : "/login?redirect=/questionnaire/basic-info";
+
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "16px 12px 28px",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "1180px",
-          margin: "0 auto",
-          backgroundColor: "#ffffff",
-          borderRadius: "24px",
-          padding: "18px",
-          boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
-        }}
-      >
-        <div
-          style={{
-            display: "inline-block",
-            backgroundColor: "#dbeafe",
-            color: "#1d4ed8",
-            padding: "10px 14px",
-            borderRadius: "999px",
-            fontWeight: 700,
-            fontSize: "clamp(13px, 3.5vw, 16px)",
-          }}
-        >
-          矿工安全意识智能评估平台
-        </div>
+    <main style={mainStyle}>
+      <section style={heroStyle}>
+        <div style={eyebrowStyle}>矿工安全意识智能评估平台</div>
 
-        <h1
-          style={{
-            marginTop: "20px",
-            marginBottom: "14px",
-            fontSize: "clamp(34px, 9vw, 72px)",
-            lineHeight: 1.2,
-            color: "#0f172a",
-            letterSpacing: "-0.02em",
-            maxWidth: "1000px",
-            wordBreak: "break-word",
-          }}
-        >
-          面向矿工行业的
-          <br />
-          AI 安全意识检测与标准化报告生成系统
-        </h1>
+        <h1 style={titleStyle}>AI 安全意识检测与标准化报告系统</h1>
 
-        <p
-          style={{
-            fontSize: "clamp(15px, 4vw, 22px)",
-            lineHeight: 1.9,
-            color: "#475569",
-            maxWidth: "1040px",
-            marginTop: 0,
-            marginBottom: "22px",
-          }}
-        >
-          本系统围绕矿工安全意识评估展开，通过问卷作答、AI 分析与标准化报告生成，
-          为用户提供结构清晰、表达统一、便于反馈的评估结果。
+        <p style={introStyle}>
+          面向矿工安全意识评估，支持登录后答题、AI 分析、报告生成和后台统一管理。
         </p>
 
-        <div
-          style={{
-            display: "grid",
-            gap: "12px",
-            marginTop: "10px",
-          }}
-        >
-          <Link href="/login" style={{ textDecoration: "none" }}>
-            <button
-              style={{
-                width: "100%",
-                backgroundColor: "#2563eb",
-                color: "#fff",
-                border: "none",
-                borderRadius: "16px",
-                padding: "16px 18px",
-                fontSize: "clamp(17px, 4.4vw, 22px)",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              用户登录
-            </button>
-          </Link>
-
-          <Link href="/register" style={{ textDecoration: "none" }}>
-            <button
-              style={{
-                width: "100%",
-                backgroundColor: "#2f5be3",
-                color: "#fff",
-                border: "none",
-                borderRadius: "16px",
-                padding: "16px 18px",
-                fontSize: "clamp(17px, 4.4vw, 22px)",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              用户注册
-            </button>
-          </Link>
-
-          <Link href="/questionnaire/basic-info" style={{ textDecoration: "none" }}>
-            <button
-              style={{
-                width: "100%",
-                backgroundColor: "#0f172a",
-                color: "#fff",
-                border: "none",
-                borderRadius: "16px",
-                padding: "16px 18px",
-                fontSize: "clamp(17px, 4.4vw, 22px)",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
+        <div style={primaryGridStyle}>
+          <Link href={questionnaireHref} style={{ textDecoration: "none" }}>
+            <button style={primaryButtonStyle}>
               开始答题
             </button>
           </Link>
 
-          <Link href="/admin" style={{ textDecoration: "none" }}>
-            <button
-              style={{
-                width: "100%",
-                backgroundColor: "#020617",
-                color: "#fff",
-                border: "none",
-                borderRadius: "16px",
-                padding: "16px 18px",
-                fontSize: "clamp(17px, 4.4vw, 22px)",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
+          <Link href={adminHref} style={{ textDecoration: "none" }}>
+            <button style={primaryButtonStyle}>
               管理员入口
             </button>
           </Link>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "14px",
-            marginTop: "24px",
-          }}
-        >
-          <section
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "18px",
-              padding: "18px",
-              background: "#fff",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "clamp(20px, 5vw, 26px)",
-                marginTop: 0,
-                marginBottom: "10px",
-                color: "#0f172a",
-              }}
-            >
-              问卷采集
-            </h3>
-            <p
-              style={{
-                color: "#64748b",
-                fontSize: "clamp(14px, 3.8vw, 17px)",
-                lineHeight: 1.8,
-                margin: 0,
-              }}
-            >
-              支持用户填写基本信息与安全意识相关问卷内容。
-            </p>
-          </section>
-
-          <section
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "18px",
-              padding: "18px",
-              background: "#fff",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "clamp(20px, 5vw, 26px)",
-                marginTop: 0,
-                marginBottom: "10px",
-                color: "#0f172a",
-              }}
-            >
-              AI 分析
-            </h3>
-            <p
-              style={{
-                color: "#64748b",
-                fontSize: "clamp(14px, 3.8vw, 17px)",
-                lineHeight: 1.8,
-                margin: 0,
-              }}
-            >
-              自动整合问卷内容并生成结构化分析结果。
-            </p>
-          </section>
-
-          <section
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "18px",
-              padding: "18px",
-              background: "#fff",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "clamp(20px, 5vw, 26px)",
-                marginTop: 0,
-                marginBottom: "10px",
-                color: "#0f172a",
-              }}
-            >
-              标准报告
-            </h3>
-            <p
-              style={{
-                color: "#64748b",
-                fontSize: "clamp(14px, 3.8vw, 17px)",
-                lineHeight: 1.8,
-                margin: 0,
-              }}
-            >
-              对 AI 输出进行统一结构化处理，形成标准化报告。
-            </p>
-          </section>
+        <div style={secondaryActionsStyle}>
+          <Link href="/login?redirect=/admin" style={smallLinkStyle}>
+            登录
+          </Link>
+          <Link href="/register" style={smallLinkStyle}>
+            注册
+          </Link>
         </div>
-      </div>
+      </section>
+
+      <section style={featureGridStyle}>
+        <FeatureCard
+          title="问卷采集"
+          text="登录用户填写基本信息与10道安全场景题，提交后进入分析流程。"
+        />
+        <FeatureCard
+          title="AI 分析"
+          text="系统整合问卷答案，生成结构化安全意识分析结果。"
+        />
+        <FeatureCard
+          title="后台管理"
+          text="管理员查看问卷、报告、评分结果与执行状态。"
+        />
+      </section>
     </main>
   );
 }
+
+function FeatureCard({ title, text }: { title: string; text: string }) {
+  return (
+    <article style={cardStyle}>
+      <h2 style={cardTitleStyle}>{title}</h2>
+      <p style={cardTextStyle}>{text}</p>
+    </article>
+  );
+}
+
+const mainStyle: React.CSSProperties = {
+  minHeight: "100vh",
+  backgroundColor: "#f8fafc",
+  padding: "64px 14px 28px",
+};
+
+const heroStyle: React.CSSProperties = {
+  maxWidth: 920,
+  margin: "0 auto",
+  backgroundColor: "#ffffff",
+  border: "1px solid #e2e8f0",
+  borderRadius: 14,
+  padding: "clamp(22px, 5vw, 34px) clamp(16px, 4vw, 24px)",
+  boxShadow: "0 12px 34px rgba(15, 23, 42, 0.08)",
+};
+
+const eyebrowStyle: React.CSSProperties = {
+  display: "inline-flex",
+  backgroundColor: "#dbeafe",
+  color: "#1d4ed8",
+  padding: "8px 12px",
+  borderRadius: 8,
+  fontWeight: 800,
+  fontSize: 14,
+};
+
+const titleStyle: React.CSSProperties = {
+  marginTop: 18,
+  marginBottom: 10,
+  fontSize: "clamp(28px, 8vw, 52px)",
+  lineHeight: 1.18,
+  color: "#0f172a",
+  letterSpacing: 0,
+  maxWidth: 880,
+};
+
+const introStyle: React.CSSProperties = {
+  fontSize: "clamp(15px, 3.8vw, 20px)",
+  lineHeight: 1.75,
+  color: "#475569",
+  maxWidth: 860,
+  marginTop: 0,
+  marginBottom: 20,
+};
+
+const primaryGridStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+  gap: 10,
+};
+
+const primaryButtonStyle: React.CSSProperties = {
+  width: "100%",
+  background: "#2563eb",
+  color: "#fff",
+  border: "none",
+  borderRadius: 10,
+  padding: "clamp(13px, 3.6vw, 18px) 16px",
+  fontSize: "clamp(17px, 4.6vw, 22px)",
+  fontWeight: 900,
+  cursor: "pointer",
+  minHeight: 54,
+};
+
+const secondaryActionsStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "center",
+  gap: 10,
+  marginTop: 14,
+  flexWrap: "wrap",
+};
+
+const smallLinkStyle: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minWidth: 82,
+  padding: "8px 12px",
+  border: "1px solid #cbd5e1",
+  borderRadius: 8,
+  background: "#fff",
+  color: "#334155",
+  textDecoration: "none",
+  fontSize: 14,
+  fontWeight: 800,
+};
+
+const featureGridStyle: React.CSSProperties = {
+  maxWidth: 920,
+  margin: "14px auto 0",
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+  gap: 10,
+};
+
+const cardStyle: React.CSSProperties = {
+  border: "1px solid #e2e8f0",
+  borderRadius: 10,
+  padding: "14px 16px",
+  background: "#fff",
+};
+
+const cardTitleStyle: React.CSSProperties = {
+  fontSize: "clamp(18px, 5vw, 22px)",
+  marginTop: 0,
+  marginBottom: 8,
+  color: "#0f172a",
+};
+
+const cardTextStyle: React.CSSProperties = {
+  color: "#64748b",
+  fontSize: 14,
+  lineHeight: 1.65,
+  margin: 0,
+};
